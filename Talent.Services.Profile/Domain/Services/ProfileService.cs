@@ -12,6 +12,7 @@ using Talent.Services.Profile.Models;
 using Microsoft.AspNetCore.Http;
 using System.IO;
 using Talent.Common.Security;
+using System.Data;
 
 namespace Talent.Services.Profile.Domain.Services
 {
@@ -52,13 +53,87 @@ namespace Talent.Services.Profile.Domain.Services
         public async Task<TalentProfileViewModel> GetTalentProfile(string Id)
         {
             //Your code here;
-            throw new NotImplementedException();
+            User profile = null;
+                    profile = (await _userRepository.GetByIdAsync(Id));
+
+            var videoUrl = "";
+            var cvUrl = "";
+            if (profile != null)
+            {
+                videoUrl = string.IsNullOrWhiteSpace(profile.VideoName)
+                          ? ""
+                          : await _fileService.GetFileURL(profile.VideoName, FileType.UserVideo);
+                cvUrl = string.IsNullOrWhiteSpace(profile.CvName)
+                          ? ""
+                          : await _fileService.GetFileURL(profile.CvName, FileType.UserCV);
+
+                var skills = profile.Skills.Select(x => ViewModelFromSkill(x)).ToList();
+                var languages = profile.Languages.Select(x => ViewModelFromLanguage(x)).ToList();
+                var education = profile.Education.Select(x => ViewModelFromEducationl(x)).ToList();
+                var certifications = profile.Certifications.Select(x => ViewModelFromCertifications(x)).ToList();
+                var experience = profile.Experience.Select(x => ViewModelFromExperience(x)).ToList();
+                var result = new TalentProfileViewModel
+                {
+                    Id = profile.Id,
+                    FirstName = profile.FirstName,
+                    MiddleName = profile.MiddleName,
+                    LastName = profile.LastName,
+                    Gender = profile.Gender,
+                    Email = profile.Email,
+                    Phone = profile.Phone,
+                    MobilePhone = profile.MobilePhone,
+                    IsMobilePhoneVerified = profile.IsMobilePhoneVerified,
+                    Address = profile.Address,
+                    Nationality = profile.Nationality,
+                    VisaStatus = profile.VisaStatus,
+                    VisaExpiryDate = profile.VisaExpiryDate,
+                    ProfilePhoto = profile.ProfilePhoto,
+                    ProfilePhotoUrl = profile.ProfilePhotoUrl,
+                    VideoName = profile.VideoName,
+                    VideoUrl = videoUrl,
+                    CvName = profile.CvName,
+                    CvUrl = cvUrl,
+                    Summary = profile.Summary,
+                    Description = profile.Description,
+                    LinkedAccounts = profile.LinkedAccounts,
+                    JobSeekingStatus = profile.JobSeekingStatus,
+                    Languages = languages,
+                    Skills = skills,
+                    Education = education,
+                    Certifications = certifications,
+                    //Experience = experience,
+                };
+                return result;
+            }
+
+            return null;
         }
+
 
         public async Task<bool> UpdateTalentProfile(TalentProfileViewModel model, string updaterId)
         {
-            //Your code here;
-            throw new NotImplementedException();
+            try
+            {
+                if (model.Id != null)
+                {
+
+                    User existingUser = (await _userRepository.GetByIdAsync(model.Id));
+                    existingUser.FirstName = model.FirstName;
+                    existingUser.LastName = model.LastName;
+                    existingUser.Email = model.Email;
+                    existingUser.Phone = model.Phone;
+                    existingUser.UpdatedBy = updaterId;
+                    existingUser.UpdatedOn = DateTime.Now;
+                    
+                    await _userRepository.Update(existingUser);
+                    return true;
+                }
+                return false;
+            }
+            catch (MongoException e)
+            {
+                return false;
+            }
         }
 
         public async Task<EmployerProfileViewModel> GetEmployerProfile(string Id, string role)
@@ -330,6 +405,53 @@ namespace Talent.Services.Profile.Domain.Services
                 Id = skill.Id,
                 Level = skill.ExperienceLevel,
                 Name = skill.Skill
+            };
+        }
+        protected AddLanguageViewModel ViewModelFromLanguage(UserLanguage language)
+        {
+            return new AddLanguageViewModel
+            {
+                Id = language.Id,
+                Level = language.LanguageLevel,
+                Name = language.Language,
+            };
+        }
+
+        protected AddEducationViewModel ViewModelFromEducationl(UserEducation education)
+        {
+            return new AddEducationViewModel
+            {
+                Id = education.Id,
+                Country = education.Country,
+                Degree = education.Degree,
+                InstituteName = education.InstituteName,
+                Title = education.Title,
+                YearOfGraduation = education.YearOfGraduation,
+            };
+        }
+
+
+        protected AddCertificationViewModel ViewModelFromCertifications(UserCertification certification)
+        {
+            return new AddCertificationViewModel
+            {
+                Id = certification.Id,
+                CertificationName = certification.CertificationName,
+                CertificationFrom = certification.CertificationFrom,
+                CertificationYear = certification.CertificationYear,
+            };
+        }
+
+        protected AddExperienceViewModel ViewModelFromExperience(UserExperience experience)
+        {
+            return new AddExperienceViewModel
+            {
+                Id = experience.Id,
+                Company = experience.Company,
+                Position = experience.Position,
+                Responsibilities = experience.Responsibilities,
+                Start = experience.Start,
+                End = experience.End,
             };
         }
 

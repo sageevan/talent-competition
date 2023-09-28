@@ -76,10 +76,18 @@ export default class AccountProfile extends React.Component {
             },
             type: "GET",
             success: function (res) {
-                this.updateWithoutSave(res.data)
-            }.bind(this)
-        })
-        this.init()
+                let profileData = null;
+                if (res.data) {
+                    profileData = res.data
+                    console.log("profileData", res.data)
+                }
+                this.updateWithoutSave(profileData)
+            }.bind(this),
+            error: function (res) {
+                console.log(res.status)
+            }
+        });
+        this.init();
     }
     //updates component's state without saving data
     updateWithoutSave(newValues) {

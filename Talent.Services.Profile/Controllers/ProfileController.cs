@@ -412,10 +412,16 @@ namespace Talent.Services.Profile.Controllers
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "talent, employer, recruiter")]
         public async Task<IActionResult> GetTalentProfile(String id = "")
         {
-            String talentId = String.IsNullOrWhiteSpace(id) ? _userAppContext.CurrentUserId : id;
-            var userProfile = await _profileService.GetTalentProfile(talentId);
-          
-            return Json(new { Success = true, data = userProfile });
+            try
+            {
+                string talentId = String.IsNullOrWhiteSpace(id) ? _userAppContext.CurrentUserId : id; 
+                var userProfile = await _profileService.GetTalentProfile(talentId);
+                return Json(new { Success = true, data = userProfile });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { Success = false, message= ex});
+            }
         }
 
         [HttpPost("updateTalentProfile")]
