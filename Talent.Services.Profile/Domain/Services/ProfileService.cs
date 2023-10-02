@@ -122,9 +122,15 @@ namespace Talent.Services.Profile.Domain.Services
                     existingUser.LastName = model.LastName;
                     existingUser.Email = model.Email;
                     existingUser.Phone = model.Phone;
+
+                    existingUser.LinkedAccounts= model.LinkedAccounts;
+
+                    existingUser.Address = model.Address;
+
                     existingUser.UpdatedBy = updaterId;
                     existingUser.UpdatedOn = DateTime.Now;
-                    
+   
+
                     await _userRepository.Update(existingUser);
                     return true;
                 }

@@ -91,7 +91,7 @@ export default class AccountProfile extends React.Component {
     }
     //updates component's state without saving data
     updateWithoutSave(newValues) {
-        let newProfile = Object.assign({}, this.state.profileData, newValues)
+        let newProfile = Object.assign([], this.state.profileData, newValues)
         this.setState({
             profileData: newProfile
         })
@@ -99,6 +99,7 @@ export default class AccountProfile extends React.Component {
 
     //updates component's state and saves data
     updateAndSaveData(newValues) {
+        
         let newProfile = Object.assign({}, this.state.profileData, newValues)
         this.setState({
             profileData: newProfile
@@ -110,6 +111,9 @@ export default class AccountProfile extends React.Component {
     }
 
     saveProfile() {
+        console.log("saving data" + this.state.profileData.linkedAccounts.linkedIn + this.state.profileData.linkedAccounts
+            .github)
+        console.log(this.state.profileData);
         var cookies = Cookies.get('talentAuthToken');
         $.ajax({
             url: 'http://localhost:60290/profile/profile/updateTalentProfile',
@@ -158,7 +162,7 @@ export default class AccountProfile extends React.Component {
                                             <SocialMediaLinkedAccount
                                                 linkedAccounts={this.state.profileData.linkedAccounts}
                                                 updateProfileData={this.updateWithoutSave}
-                                                saveProfileData={this.updateAndSaveData}
+                                                saveProfileData={this.updateForComponentId}
                                             />
                                         </FormItemWrapper>
                                         <FormItemWrapper
