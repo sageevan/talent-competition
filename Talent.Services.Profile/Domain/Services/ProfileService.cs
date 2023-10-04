@@ -127,6 +127,10 @@ namespace Talent.Services.Profile.Domain.Services
 
                     existingUser.Address = model.Address;
 
+                    existingUser.Nationality = model.Nationality;
+
+                    existingUser.Languages = model.Languages;
+
                     existingUser.UpdatedBy = updaterId;
                     existingUser.UpdatedOn = DateTime.Now;
    

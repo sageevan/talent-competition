@@ -179,36 +179,41 @@ export class Nationality extends React.Component {
     constructor(props) {
         super(props)
 
-        const nationality = props.nationalityData ?
-            Object.assign({}, props.nationality)
+        const nationalitydata = props.nationalityData ?
+            Object.assign({}, props.nationalityData)
             : {
                 nationality:""
             }
 
         this.state = {
-            newNationality: nationality
+            newNationality: nationalitydata
         }
+
+        this.handleChange = this.handleChange.bind(this)
     }
 
     handleChange(event) {
+        console.log(event.target.name + event.target.value)
+        
         const data = Object.assign({}, this.state.newNationality)
         data[event.target.name] = event.target.value
         this.setState({
-            newNationality: data
+          newNationality: data
         })
-        //this.props.saveProfileData(this.stat.newNationality)
+        console.log(data)
+        this.props.saveProfileData(data)
     }
 
     
     render() {
+        const selectedNationality = this.props.nationalityData
         return (
             <div className='ui sixteen wide column'>
                 <select
                     className="ui dropdown"
-                    value={this.state.newNationality}
+                    value={selectedNationality}
                     onChange={this.handleChange}
                     name="nationality">
-                    <option>Select your language</option>
                     <option key="1">1</option>
                     <option key="2">2</option>
                     <option key="3">3</option>
