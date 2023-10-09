@@ -7,10 +7,11 @@ export default class Language extends React.Component {
     constructor(props) {
         super(props);
         const languagedata = props.languageData ?
-            Object.assign({}, props.languageData)
+            Object.assign([], props.languageData)
             : {
-                language: "",
-                languageLevel :""
+                id:"",
+                name: "",
+                level :""
             }
 
         this.state = {
@@ -23,6 +24,7 @@ export default class Language extends React.Component {
         this.addNew = this.addNew.bind(this)
         this.closeAddNew = this.closeAddNew.bind(this)
         this.saveLanguage = this.saveLanguage.bind(this)
+        this.loadData = this.loadData.bind(this)
   
     }
     handleChange(event) {
@@ -46,11 +48,38 @@ export default class Language extends React.Component {
         this.setState({ addNew:false })
     }
     saveLanguage() {
-        const data = Object.assign(this.props.languageData, this.state.newLanguage)
+        const language = { 'name': this.state.newLanguage.name, 'level': this.state.newLanguage.level }
+        // console.log(language)
+        const data = Object.assign({}, language)
+        console.log(data)
+        //data.id = "new";
         this.props.updateProfileData(data)
         this.closeAddNew()
     }
-
+    loadData() {
+        var cookies = Cookies.get('talentAuthToken');
+        $.ajax({
+            url: 'http://localhost:60290/profile/profile/getLanguage',
+            headers: {
+                'Authorization': 'Bearer ' + cookies,
+                'Content-Type': 'application/json'
+            },
+            type: "GET",
+            success: function (res) {
+                //let profileData = null;
+                if (res) {
+                    //profileData = res.data
+                    console.log("profileData", res)
+                }
+                console.log(res)
+                //this.updateWithoutSave(profileData)
+            }.bind(this),
+            error: function (res) {
+                console.log(res.status)
+            }
+        });
+       // this.init();
+    }
 
     renderAddNew() {
         return (
@@ -59,8 +88,8 @@ export default class Language extends React.Component {
                 <div className='ui sixteen wide column'>
                     <ChildSingleInput
                         inputType="text"
-                        name="language"
-                        value={this.state.newLanguage.language}
+                        name="name"
+                        value={this.state.newLanguage.name}
                         controlFunc={this.handleChange}
                         maxLength={20}
                         placeholder="Add Language"
@@ -68,9 +97,9 @@ export default class Language extends React.Component {
                     />
                     <select
                         className="ui right labeled dropdown"
-                        value={this.state.newLanguage.languageLevel}
+                        value={this.state.newLanguage.level}
                         onChange={this.handleChange}
-                        name="languageLevel">
+                        name="level">
                         <option>Basic</option>
                         <option>Conversational</option>
                         <option>Fluent</option>
@@ -85,6 +114,7 @@ export default class Language extends React.Component {
     }
 
     renderDisplay() {
+        this.loadData()
         return (
             <div className='language-table'>
                 <table class="ui table">

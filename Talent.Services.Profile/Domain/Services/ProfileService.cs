@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Http;
 using System.IO;
 using Talent.Common.Security;
 using System.Data;
+using StackExchange.Redis;
 
 namespace Talent.Services.Profile.Domain.Services
 {
@@ -44,17 +45,44 @@ namespace Talent.Services.Profile.Domain.Services
             _fileService = fileService;
         }
 
-        public bool AddNewLanguage(AddLanguageViewModel language)
+        public async Task<bool> AddNewLanguage(AddLanguageViewModel language , String userId)
         {
-            //Your code here;
-            throw new NotImplementedException();
+            try
+            {
+                // {
+                //Your code here;
+                var newLanguage = new List<UserLanguage>();
+                var newlanguage = new UserLanguage
+                {
+                    Id = ObjectId.GenerateNewId().ToString(),
+                    LanguageLevel = language.Level,
+                    Language = language.Name,
+                    UserId = userId,
+                    IsDeleted = false
+                };
+                //     }
+                //     AddLanguageViewLanguage(item, language);
+                // newLanguage.Add(newlanguage);
+                // 
+                newLanguage.Add(newlanguage);
+                 //_userLanguageRepository.Add(newlanguage);
+                var user =await _userRepository.GetByIdAsync(userId);
+                user.Languages.Add(newlanguage);
+                await _userRepository.Update(user);
+                //Result.Languages.Add(newlanguage);
+                return true;
+            }
+            catch (MongoException e)
+            {
+                return false;
+            }
         }
 
         public async Task<TalentProfileViewModel> GetTalentProfile(string Id)
         {
             //Your code here;
             User profile = null;
-                    profile = (await _userRepository.GetByIdAsync(Id));
+            profile = (await _userRepository.GetByIdAsync(Id));
 
             var videoUrl = "";
             var cvUrl = "";
@@ -68,6 +96,7 @@ namespace Talent.Services.Profile.Domain.Services
                           : await _fileService.GetFileURL(profile.CvName, FileType.UserCV);
 
                 var skills = profile.Skills.Select(x => ViewModelFromSkill(x)).ToList();
+               // var lan = _userLanguageRepository.
                 var languages = profile.Languages.Select(x => ViewModelFromLanguage(x)).ToList();
                 var education = profile.Education.Select(x => ViewModelFromEducationl(x)).ToList();
                 var certifications = profile.Certifications.Select(x => ViewModelFromCertifications(x)).ToList();
@@ -97,7 +126,7 @@ namespace Talent.Services.Profile.Domain.Services
                     Description = profile.Description,
                     LinkedAccounts = profile.LinkedAccounts,
                     JobSeekingStatus = profile.JobSeekingStatus,
-                    Languages = languages,
+                    //Languages = languages,
                     Skills = skills,
                     Education = education,
                     Certifications = certifications,
@@ -118,6 +147,8 @@ namespace Talent.Services.Profile.Domain.Services
                 {
 
                     User existingUser = (await _userRepository.GetByIdAsync(model.Id));
+
+                    //existingUser.Languages.Add(model.Languages.Select(x => UpdateModelForLanguage(x)).ToList().FirstOrDefault());
                     existingUser.FirstName = model.FirstName;
                     existingUser.LastName = model.LastName;
                     existingUser.Email = model.Email;
@@ -129,7 +160,19 @@ namespace Talent.Services.Profile.Domain.Services
 
                     existingUser.Nationality = model.Nationality;
 
-                    existingUser.Languages = model.Languages;
+                    //var newLanguage = new List<UserLanguage>();
+                    // foreach (var item in model.Languages)
+                    // {
+                    //   var language = existingUser.Languages.SingleOrDefault(x => x.Id == item.Id);
+                    //     if (language == null)
+                    //     {
+                    //      AddNewLanguage(item, model.Id);
+                    //    }                    
+                        
+                    //}
+                    //existingUser.Languages = newLanguage;
+
+                    //existingUser.Languages = model.Languages.Select(x => UpdateModelForLanguage(x)).ToList();
 
                     existingUser.UpdatedBy = updaterId;
                     existingUser.UpdatedOn = DateTime.Now;
@@ -426,6 +469,7 @@ namespace Talent.Services.Profile.Domain.Services
                 Name = language.Language,
             };
         }
+
 
         protected AddEducationViewModel ViewModelFromEducationl(UserEducation education)
         {

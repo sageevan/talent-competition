@@ -138,15 +138,32 @@ namespace Talent.Services.Profile.Controllers
         public async Task<IActionResult> GetLanguages()
         {
             //Your code here;
-            throw new NotImplementedException();
+            var userId = _userAppContext.CurrentUserId;
+            var user = await _userRepository.GetByIdAsync(userId);
+            var languages = user.Languages;
+             return Json(new { Languages = languages });
+            //throw new NotImplementedException();
         }
 
         [HttpPost("addLanguage")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "talent")]
-        public ActionResult AddLanguage([FromBody] AddLanguageViewModel language)
+        public async Task<ActionResult> AddLanguage([FromBody] AddLanguageViewModel language)
         {
             //Your code here;
-            throw new NotImplementedException();
+            try
+            {
+                var user = await _userRepository.GetByIdAsync(_userAppContext.CurrentUserId);
+                if (await _profileService.AddNewLanguage(language, user.Id))
+                {
+                    return Json(new { Success = true });
+                }
+
+            }
+            catch (Exception e)
+            {
+                return Json(new { Success = false, e.Message });
+            }
+            return Json(new { Success = false });
         }
 
         [HttpPost("updateLanguage")]
@@ -437,6 +454,7 @@ namespace Talent.Services.Profile.Controllers
             }
             return Json(new { Success = false });
         }
+
 
         [HttpGet("getTalent")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "recruiter, employer")]

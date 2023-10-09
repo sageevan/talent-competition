@@ -76,10 +76,10 @@ export class Address extends React.Component {
         let popCities = [];
         const selectedCountry = this.state.newAddress.country;
         const selectedCity = this.state.newAddress.city;
-        const selctedCountryOption = Countries[selectedCountry];
-        console.log(selctedCountryOption)
+        const selectedCountryOption = Countries[selectedCountry];
+        console.log(selectedCountryOption)
         countriesOptions = Object.keys(Countries).map((x) => <option key={x} value={x}>{x}</option>);
-        popCities = selctedCountryOption.map((x) => <option key={x} value={x}> {x}</option>);
+        popCities = selectedCountryOption ? selectedCountryOption.map((x) => <option key={x} value={x}> {x}</option>):"";
         return (
 
             
@@ -129,7 +129,7 @@ export class Address extends React.Component {
                 className="ui right labeled dropdown"
                     value={selectedCountry}
                     onChange={this.handleChange}
-                    name="country">
+                    name="country">Select Country
                     {countriesOptions}
                 </select>
                 <br></br>
@@ -138,7 +138,7 @@ export class Address extends React.Component {
                     className="ui dropdown"
                     value={selectedCity}
                     onChange={this.handleChange}
-                    name="city">
+                    name="city">Select City
                     {popCities}
                 </select>
                 <br></br>
