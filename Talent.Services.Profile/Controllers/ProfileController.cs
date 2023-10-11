@@ -171,15 +171,40 @@ namespace Talent.Services.Profile.Controllers
         public async Task<ActionResult> UpdateLanguage([FromBody] AddLanguageViewModel language)
         {
             //Your code here;
-            throw new NotImplementedException();
+            try
+            {
+                var user = await _userRepository.GetByIdAsync(_userAppContext.CurrentUserId);
+                if (await _profileService.UpdateLanguage(language, user.Id))
+                {
+                    return Json(new { Success = true });
+                }
+
+            }
+            catch (Exception e)
+            {
+                return Json(new { Success = false, e.Message });
+            }
+            return Json(new { Success = false });
         }
 
         [HttpPost("deleteLanguage")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "talent")]
         public async Task<ActionResult> DeleteLanguage([FromBody] AddLanguageViewModel language)
         {
-            //Your code here;
-            throw new NotImplementedException();
+            try
+            {
+                var user = await _userRepository.GetByIdAsync(_userAppContext.CurrentUserId);
+                if (await _profileService.DeleteLanguage(language, user.Id))
+                {
+                    return Json(new { Success = true });
+                }
+
+            }
+            catch (Exception e)
+            {
+                return Json(new { Success = false, e.Message });
+            }
+            return Json(new { Success = false });
         }
 
         [HttpGet("getSkill")]

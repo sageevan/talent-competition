@@ -51,7 +51,7 @@ namespace Talent.Services.Profile.Domain.Services
             {
                 // {
                 //Your code here;
-                var newLanguage = new List<UserLanguage>();
+                //var newLanguage = new List<UserLanguage>();
                 var newlanguage = new UserLanguage
                 {
                     Id = ObjectId.GenerateNewId().ToString(),
@@ -64,11 +64,62 @@ namespace Talent.Services.Profile.Domain.Services
                 //     AddLanguageViewLanguage(item, language);
                 // newLanguage.Add(newlanguage);
                 // 
-                newLanguage.Add(newlanguage);
                  //_userLanguageRepository.Add(newlanguage);
                 var user =await _userRepository.GetByIdAsync(userId);
                 user.Languages.Add(newlanguage);
                 await _userRepository.Update(user);
+                //Result.Languages.Add(newlanguage);
+                return true;
+            }
+            catch (MongoException e)
+            {
+                return false;
+            }
+        }
+
+        public async Task<bool> DeleteLanguage(AddLanguageViewModel language, String userId)
+        {
+            try
+            {
+
+                var deletelanguage = new UserLanguage
+                {
+                    Id = language.Id,
+                };
+
+                var user = await _userRepository.GetByIdAsync(userId);
+                UserLanguage deleteLanguage = user.Languages.Where(x => x.Id == deletelanguage.Id).FirstOrDefault();
+                user.Languages.Remove(deleteLanguage);
+                await _userRepository.Update(user);
+                //Result.Languages.Add(newlanguage);
+                return true;
+            }
+            catch (MongoException e)
+            {
+                return false;
+            }
+        }
+
+        public async Task<bool> UpdateLanguage(AddLanguageViewModel language, String userId)
+        {
+            try
+            {
+                var updatelanguage = new UserLanguage
+                {
+                    Id = language.Id,
+                    LanguageLevel = language.Level,
+                    Language = language.Name,
+                    UserId = userId,
+                    IsDeleted = false
+                };
+
+                var user = await _userRepository.GetByIdAsync(userId);
+                UserLanguage updateLanguage = user.Languages.Where(x => x.Id == updatelanguage.Id).FirstOrDefault();
+                user.Languages.Remove(updateLanguage);
+                user.Languages.Add(updatelanguage);
+                await _userRepository.Update(user);
+
+               
                 //Result.Languages.Add(newlanguage);
                 return true;
             }
@@ -160,19 +211,6 @@ namespace Talent.Services.Profile.Domain.Services
 
                     existingUser.Nationality = model.Nationality;
 
-                    //var newLanguage = new List<UserLanguage>();
-                    // foreach (var item in model.Languages)
-                    // {
-                    //   var language = existingUser.Languages.SingleOrDefault(x => x.Id == item.Id);
-                    //     if (language == null)
-                    //     {
-                    //      AddNewLanguage(item, model.Id);
-                    //    }                    
-                        
-                    //}
-                    //existingUser.Languages = newLanguage;
-
-                    //existingUser.Languages = model.Languages.Select(x => UpdateModelForLanguage(x)).ToList();
 
                     existingUser.UpdatedBy = updaterId;
                     existingUser.UpdatedOn = DateTime.Now;

@@ -50,7 +50,6 @@ export default class AccountProfile extends React.Component {
         this.updateWithoutSave = this.updateWithoutSave.bind(this)
         this.updateAndSaveData = this.updateAndSaveData.bind(this)
         this.updateForComponentId = this.updateForComponentId.bind(this)
-        this.updateAndSaveArrays = this.updateAndSaveArrays.bind(this)
         this.saveProfile = this.saveProfile.bind(this)
         this.loadData = this.loadData.bind(this)
         this.init = this.init.bind(this);
@@ -107,49 +106,7 @@ export default class AccountProfile extends React.Component {
         }, this.saveProfile)
     }
 
-    updateAndSaveArrays(newValues) {
-        //let newProfile = Object.assign({}, this.state.profileData, { languages: [this.state.profileData.languages, newValues] })
-        let newProfile = Object.assign({}, this.state.profileData, { languages: [newValues] })
-        console.log(newProfile)
-        this.setState({
-            profileData: newProfile
-        }, this.addLanguage)
-
-       // console.log(this.state.profileData)
-    }
-
-    addLanguage(newValues) {
-        var cookies = Cookies.get('talentAuthToken');
-        $.ajax({
-            url: 'http://localhost:60290/profile/profile/addLanguage',
-            headers: {
-                'Authorization': 'Bearer ' + cookies,
-                'Content-Type': 'application/json'
-            },
-            type: "POST",
-            dataType: "json",
-            data: JSON.stringify(newValues),
-            success: function (res) {
-                console.log(res);
-                console.log("This is the languages after saving: ", newValues);
-                if (res.success == true) {
-                    TalentUtil.notification.show("Profile updated sucessfully", "success", null, null)
-                } else {
-                    console.log(res.state);
-                    TalentUtil.notification.show("Profile did not update successfully", "error", null, null)
-                }
-
-            }.bind(this),
-            error: function (res, a, b) {
-                console.log(res)
-                console.log(a)
-                console.log(b)
-            }
-        })
-    }
-
-
-    updateForComponentId(componentId, newValues) {
+   updateForComponentId(componentId, newValues) {
         this.updateAndSaveData(newValues)
     }
 
@@ -241,7 +198,7 @@ export default class AccountProfile extends React.Component {
                                         >
                                             <Language
                                                 languageData={this.state.profileData.languages}
-                                                updateProfileData={this.addLanguage}
+                                                updateProfileData={this.updateAndSaveData}
                                             />
                                         </FormItemWrapper>
                                         <FormItemWrapper

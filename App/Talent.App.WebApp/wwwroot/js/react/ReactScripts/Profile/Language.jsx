@@ -1,6 +1,7 @@
 ﻿/* Language section */
 import React from 'react';
 import Cookies from 'js-cookie';
+import { BsFillTrashFill, BsFillPencilFill } from "react-icons/bs";
 import { ChildSingleInput } from '../Form/SingleInput.jsx';
 import { BodyWrapper, loaderData } from '../Layout/BodyWrapper.jsx';
 
@@ -16,6 +17,7 @@ export default class Language extends React.Component {
         ]
 
         this.state = {
+            editLanguageId : "",
             loaderData: loaderData,
             addNew: false,
             newLanguage: languagedata,
@@ -29,6 +31,10 @@ export default class Language extends React.Component {
         this.saveLanguage = this.saveLanguage.bind(this)
         this.init = this.init.bind(this)
         this.loadData = this.loadData.bind(this)
+        this.updateLanguage = this.updateLanguage.bind(this)
+        this.deleteLanguage = this.deleteLanguage.bind(this)
+        this.closeUpdate = this.closeUpdate.bind(this)
+        this.selectLanguageForUpdate = this.selectLanguageForUpdate.bind(this)
   
     }
     init() {
@@ -53,8 +59,8 @@ export default class Language extends React.Component {
         this.setState({ addNew: true })
     }
     render() {
-        return(
-        this.state.addNew ? this.renderAddNew() : this.renderDisplay(this.state.languageData)
+        return (
+            this.state.addNew ? this.renderAddNew() : this.renderDisplay(this.state.languageData, this.state.editLanguageId, this, this.state.addNew)
         )
     }
     closeAddNew() {
@@ -68,7 +74,35 @@ export default class Language extends React.Component {
         const data = Object.assign({}, language)
         console.log(data)
         //data.id = "new";
-        this.props.updateProfileData(data)
+        //this.props.updateProfileData(data)
+        var cookies = Cookies.get('talentAuthToken');
+        $.ajax({
+            url: 'http://localhost:60290/profile/profile/addLanguage',
+            headers: {
+                'Authorization': 'Bearer ' + cookies,
+                'Content-Type': 'application/json'
+            },
+            type: "POST",
+            dataType: "json",
+            data: JSON.stringify(data),
+            success: function (res) {
+                console.log(res);
+                console.log("This is the languages after saving: ", data);
+                if (res.success == true) {
+                    TalentUtil.notification.show("Profile updated sucessfully", "success", null, null)
+                } else {
+                    console.log(res.state);
+                    TalentUtil.notification.show("Profile did not update successfully", "error", null, null)
+                }
+
+            }.bind(this),
+            error: function (res, a, b) {
+                console.log(res)
+                console.log(a)
+                console.log(b)
+            }
+        })
+
         this.closeAddNew()
     }
     loadData() {
@@ -98,12 +132,91 @@ export default class Language extends React.Component {
         this.init();
     }
 
+    selectLanguageForUpdate(language) {
+        console.log(language)
+        this.setState({ editLanguageId : language.id })
+    }
+
+    updateLanguage() {
+        this.loadData();
+        const language = { 'name': this.state.newLanguage.name, 'level': this.state.newLanguage.level }
+        // console.log(language)
+        const data = Object.assign({}, language)
+        console.log(data)
+        //data.id = "new";
+        //this.props.updateProfileData(data)
+        var cookies = Cookies.get('talentAuthToken');
+        $.ajax({
+            url: 'http://localhost:60290/profile/profile/updateLanguage',
+            headers: {
+                'Authorization': 'Bearer ' + cookies,
+                'Content-Type': 'application/json'
+            },
+            type: "POST",
+            dataType: "json",
+            data: JSON.stringify(data),
+            success: function (res) {
+                console.log(res);
+                console.log("This is the languages after saving: ", data);
+                if (res.success == true) {
+                    TalentUtil.notification.show("Profile updated sucessfully", "success", null, null)
+                } else {
+                    console.log(res.state);
+                    TalentUtil.notification.show("Profile did not update successfully", "error", null, null)
+                }
+
+            }.bind(this),
+            error: function (res, a, b) {
+                console.log(res)
+                console.log(a)
+                console.log(b)
+            }
+        })
+
+        this.closeUpdate()
+    }
+
+    deleteLanguage(data) {
+       // console.log(language)
+
+        var cookies = Cookies.get('talentAuthToken');
+        $.ajax({
+            url: 'http://localhost:60290/profile/profile/deleteLanguage',
+            headers: {
+                'Authorization': 'Bearer ' + cookies,
+                'Content-Type': 'application/json'
+            },
+            type: "POST",
+            dataType: "json",
+            data: JSON.stringify(data),
+            success: function (res) {
+                console.log(res);
+                console.log("This is the languages after saving: ", data);
+                if (res.success == true) {
+                    TalentUtil.notification.show("Language deleted sucessfully", "success", null, null)
+                } else {
+                    console.log(res.state);
+                    TalentUtil.notification.show("Language did not delete successfully", "error", null, null)
+                }
+
+            }.bind(this),
+            error: function (res, a, b) {
+                console.log(res)
+                console.log(a)
+                console.log(b)
+            }
+        })
+    }
+
+    closeUpdate() {
+        this.setState({ editLanguageId: "" })
+    }
 
     renderAddNew() {
         return (
 
             <div>
-                <div className='ui sixteen wide column'>
+                <div className='ui column'>
                     <ChildSingleInput
                         inputType="text"
                         name="name"
@@ -131,32 +244,65 @@ export default class Language extends React.Component {
         
     }
 
-    renderDisplay(languages) {
-       console.log(languages)
+    renderDisplay(languages, editId, ctrl, addNew) {
+        //console.log(languages)
         return (
-            <div className='language-table'>
-                <table class="ui table">
-                    <thead>
-                        <tr>
-                            <th>Language</th>
-                            <th>Level<button type="button" className="ui right floated teal button" onClick={this.addNew}>+ Add New</button></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {languages.map((language) => 
-                            <tr key={language.id}>
-                                <td>{language.language}</td>
-                                <td>{language.languageLevel}</td>
-                                </tr>
-           
-                        )}
-                    </tbody>
-                </table>
-            </div>
+            
+               <div className='language-table'>
+                    <table class="ui table">
+                        <thead>
+                            <tr>
+                                <th>Language</th>
+                                <th>Level<button type="button" className="ui right floated teal button" onClick={this.addNew}>+ Add New</button></th>
+                                <th></th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {
+                                languages.map((language) => (
+                                    language.id == editId ?
+                                        <tr key={language.id}>
+                                            <input
+                                                inputType="text"
+                                                name="name"
+                                                defaultValue={language.language}
+                                                onChange={this.handleChange}
+                                                maxLength={20}
+                                                placeholder="Add Language"
+                                                errorMessage="Please enter a valid Language"></input>
+                                            
+                                            <select
+                                                className="ui right labeled dropdown"
+                                                defaultValue={language.languageLevel}
+                                                onChange={this.handleChange}
+                                                name="level">
+                                                <option>Basic</option>
+                                                <option>Conversational</option>
+                                                <option>Fluent</option>
+                                                <option>Native/Bilingual</option>
+                                            </select>
+                                            <td><button type="button" className="ui teal button" onClick={this.updateLanguage}>Save</button></td>
+                                            <td><button type="button" className="ui button" onClick={this.closeUpdate}>Cancel</button></td>
+                                        </tr>
+                                        :
+                                        <tr key={language.id}>
+                                            <td>{language.language}</td>
+                                            <td>{language.languageLevel}</td>
+                                            <td><button type="button" onClick={() => { this.selectLanguageForUpdate(language) }}><BsFillPencilFill /></button></td>
+                                            <td><button type="button" onClick={() => { this.deleteLanguage(language) }}><BsFillTrashFill /></button></td>
+                                        </tr>
+                                )
+                                )}
+                        </tbody>
+                    </table>
+                </div>
+            
         )
     }
 }
 
-                                                        //<td><button className="btn-edit" onClick={() => { ctrl.updateCustomer(customer) }}><BsFillPencilFill /></button></td>
-                                    //<td><button className="btn-delete" onClick={() => { ctrl.deleteCustomerRequest(customer) }}><BsFillTrashFill /></button></td>
+                                                        
 
+                                                   // <td><button className="btn-edit" onClick={() => { ctrl.updateCustomer(customer) }}><BsFillPencilFill /></button></td>
+                                //<td><button className="btn-delete" onClick={() => { ctrl.deleteCustomerRequest(customer) }}><BsFillTrashFill /></button></td>
