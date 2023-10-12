@@ -137,6 +137,7 @@ export default class AccountProfile extends React.Component {
                 console.log(b)
             }
         })
+ 
     }
 
     render() {

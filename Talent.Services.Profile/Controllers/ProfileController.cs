@@ -155,7 +155,9 @@ namespace Talent.Services.Profile.Controllers
                 var user = await _userRepository.GetByIdAsync(_userAppContext.CurrentUserId);
                 if (await _profileService.AddNewLanguage(language, user.Id))
                 {
-                    return Json(new { Success = true });
+                    var updatedProfile = await _userRepository.GetByIdAsync(_userAppContext.CurrentUserId);
+                    var languages = updatedProfile.Languages;
+                    return Json(new { Languages = languages });
                 }
 
             }
@@ -176,7 +178,9 @@ namespace Talent.Services.Profile.Controllers
                 var user = await _userRepository.GetByIdAsync(_userAppContext.CurrentUserId);
                 if (await _profileService.UpdateLanguage(language, user.Id))
                 {
-                    return Json(new { Success = true });
+                    var updatedProfile = await _userRepository.GetByIdAsync(_userAppContext.CurrentUserId);
+                    var languages = updatedProfile.Languages;
+                    return Json(new { Languages = languages });
                 }
 
             }
@@ -196,7 +200,9 @@ namespace Talent.Services.Profile.Controllers
                 var user = await _userRepository.GetByIdAsync(_userAppContext.CurrentUserId);
                 if (await _profileService.DeleteLanguage(language, user.Id))
                 {
-                    return Json(new { Success = true });
+                    var updatedProfile = await _userRepository.GetByIdAsync(_userAppContext.CurrentUserId);
+                    var languages = updatedProfile.Languages;
+                    return Json(new { Languages = languages });
                 }
 
             }

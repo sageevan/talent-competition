@@ -21,6 +21,7 @@ export default class Language extends React.Component {
             loaderData: loaderData,
             addNew: false,
             newLanguage: languagedata,
+            updateLanguage: languagedata,
             languageData: languagedata
         }
         this.handleChange = this.handleChange.bind(this)
@@ -35,6 +36,7 @@ export default class Language extends React.Component {
         this.deleteLanguage = this.deleteLanguage.bind(this)
         this.closeUpdate = this.closeUpdate.bind(this)
         this.selectLanguageForUpdate = this.selectLanguageForUpdate.bind(this)
+        this.handleUpdate = this.handleUpdate.bind(this)
   
     }
     init() {
@@ -55,6 +57,13 @@ export default class Language extends React.Component {
             newLanguage: data
         })
     }
+    handleUpdate(event) {
+        const data = Object.assign({}, this.state.updateLanguage)
+        data[event.target.name] = event.target.value
+        this.setState({
+            updateLanguage: data
+        })
+    }
     addNew() {
         this.setState({ addNew: true })
     }
@@ -64,8 +73,9 @@ export default class Language extends React.Component {
         )
     }
     closeAddNew() {
-        this.setState({ addNew: false })
-
+        this.setState({
+            addNew: false
+        })
     }
     saveLanguage() {
         this.loadData();
@@ -86,13 +96,19 @@ export default class Language extends React.Component {
             dataType: "json",
             data: JSON.stringify(data),
             success: function (res) {
-                console.log(res);
-                console.log("This is the languages after saving: ", data);
-                if (res.success == true) {
-                    TalentUtil.notification.show("Profile updated sucessfully", "success", null, null)
+                let languagedata = null;
+                if (res) {
+                    languagedata = res.languages
+                    console.log("After save", languagedata)
+                    this.setState({
+                        languageData: languagedata
+                    })
+
+                    TalentUtil.notification.show("Language added sucessfully", "success", null, null)
+
                 } else {
                     console.log(res.state);
-                    TalentUtil.notification.show("Profile did not update successfully", "error", null, null)
+                    TalentUtil.notification.show("Language did not add successfully", "error", null, null)
                 }
 
             }.bind(this),
@@ -104,6 +120,7 @@ export default class Language extends React.Component {
         })
 
         this.closeAddNew()
+ 
     }
     loadData() {
         var cookies = Cookies.get('talentAuthToken');
@@ -130,6 +147,7 @@ export default class Language extends React.Component {
             }
         });
         this.init();
+        
     }
 
     selectLanguageForUpdate(language) {
@@ -138,13 +156,10 @@ export default class Language extends React.Component {
     }
 
     updateLanguage() {
-        this.loadData();
-        const language = { 'name': this.state.newLanguage.name, 'level': this.state.newLanguage.level }
-        // console.log(language)
+
+         const language = { 'id': this.state.editLanguageId, 'name': this.state.updateLanguage.name, 'level': this.state.updateLanguage.level }
         const data = Object.assign({}, language)
         console.log(data)
-        //data.id = "new";
-        //this.props.updateProfileData(data)
         var cookies = Cookies.get('talentAuthToken');
         $.ajax({
             url: 'http://localhost:60290/profile/profile/updateLanguage',
@@ -156,13 +171,18 @@ export default class Language extends React.Component {
             dataType: "json",
             data: JSON.stringify(data),
             success: function (res) {
-                console.log(res);
-                console.log("This is the languages after saving: ", data);
-                if (res.success == true) {
-                    TalentUtil.notification.show("Profile updated sucessfully", "success", null, null)
+                let languagedata = null;
+                if (res) {
+                    languagedata = res.languages
+                    this.setState({
+                        languageData: languagedata
+                    })
+                    
+                    TalentUtil.notification.show("Language updated sucessfully", "success", null, null)
+
                 } else {
                     console.log(res.state);
-                    TalentUtil.notification.show("Profile did not update successfully", "error", null, null)
+                    TalentUtil.notification.show("Language did not update successfully", "error", null, null)
                 }
 
             }.bind(this),
@@ -172,8 +192,8 @@ export default class Language extends React.Component {
                 console.log(b)
             }
         })
-
         this.closeUpdate()
+
     }
 
     deleteLanguage(data) {
@@ -190,9 +210,12 @@ export default class Language extends React.Component {
             dataType: "json",
             data: JSON.stringify(data),
             success: function (res) {
-                console.log(res);
-                console.log("This is the languages after saving: ", data);
-                if (res.success == true) {
+                let languagedata = null;
+                if (res) {
+                    languagedata = res.languages
+                    this.setState({
+                        languageData: languagedata
+                    })
                     TalentUtil.notification.show("Language deleted sucessfully", "success", null, null)
                 } else {
                     console.log(res.state);
@@ -220,7 +243,6 @@ export default class Language extends React.Component {
                     <ChildSingleInput
                         inputType="text"
                         name="name"
-                        value={this.state.newLanguage.name}
                         controlFunc={this.handleChange}
                         maxLength={20}
                         placeholder="Add Language"
@@ -228,9 +250,11 @@ export default class Language extends React.Component {
                     />
                     <select
                         className="ui right labeled dropdown"
-                        value={this.state.newLanguage.level}
-                        onChange={this.handleChange}
+                        onChange={this.handleChange}                        
                         name="level">
+                        <option defaultValue hidden>
+                            {'Select Level'}
+                        </option>
                         <option>Basic</option>
                         <option>Conversational</option>
                         <option>Fluent</option>
@@ -267,7 +291,7 @@ export default class Language extends React.Component {
                                                 inputType="text"
                                                 name="name"
                                                 defaultValue={language.language}
-                                                onChange={this.handleChange}
+                                                onChange={this.handleUpdate}
                                                 maxLength={20}
                                                 placeholder="Add Language"
                                                 errorMessage="Please enter a valid Language"></input>
@@ -275,7 +299,7 @@ export default class Language extends React.Component {
                                             <select
                                                 className="ui right labeled dropdown"
                                                 defaultValue={language.languageLevel}
-                                                onChange={this.handleChange}
+                                                onChange={(e) => this.handleUpdate(e)}
                                                 name="level">
                                                 <option>Basic</option>
                                                 <option>Conversational</option>
