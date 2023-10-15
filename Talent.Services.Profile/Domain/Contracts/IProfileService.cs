@@ -15,6 +15,10 @@ namespace Talent.Services.Profile.Domain.Contracts
         Task<bool> DeleteLanguage(AddLanguageViewModel language, String Id);
         Task<bool> UpdateLanguage(AddLanguageViewModel language, String Id);
 
+        Task<bool> AddNewSkill(AddSkillViewModel language, String Id);
+        Task<bool> DeleteSkill(AddSkillViewModel language, String Id);
+        Task<bool> UpdateSkill(AddSkillViewModel language, String Id);
+
         Task<TalentProfileViewModel> GetTalentProfile(String Id);
         Task<IEnumerable<string>> GetTalentSuggestionIds(string employerOrJobId, bool forJob, int position, int increment);
         Task<IEnumerable<TalentSnapshotViewModel>> GetTalentSnapshotList(string employerOrJobId, bool forJob, int position, int increment);

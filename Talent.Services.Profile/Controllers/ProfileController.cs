@@ -137,12 +137,17 @@ namespace Talent.Services.Profile.Controllers
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "talent")]
         public async Task<IActionResult> GetLanguages()
         {
-            //Your code here;
-            var userId = _userAppContext.CurrentUserId;
-            var user = await _userRepository.GetByIdAsync(userId);
-            var languages = user.Languages;
-             return Json(new { Languages = languages });
-            //throw new NotImplementedException();
+            try
+            {
+                var userId = _userAppContext.CurrentUserId;
+                var user = await _userRepository.GetByIdAsync(userId);
+                var languages = user.Languages;
+                return Json(new { Languages = languages });
+            }
+            catch (Exception e)
+            {
+                return Json(new { Success = false, e.Message });
+            }
         }
 
         [HttpPost("addLanguage")]
@@ -217,32 +222,83 @@ namespace Talent.Services.Profile.Controllers
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "talent")]
         public async Task<IActionResult> GetSkills()
         {
-            //Your code here;
-            throw new NotImplementedException();
+            try
+            {
+                var userId = _userAppContext.CurrentUserId;
+                var user = await _userRepository.GetByIdAsync(userId);
+                var skills = user.Skills;
+                return Json(new { Skills = skills });
+            }
+            catch (Exception e)
+            {
+                return Json(new { Success = false, e.Message });
+            }
         }
 
         [HttpPost("addSkill")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "talent")]
-        public ActionResult AddSkill([FromBody]AddSkillViewModel skill)
+        public async Task<ActionResult> AddSkill([FromBody]AddSkillViewModel skill)
         {
-            //Your code here;
-            throw new NotImplementedException();
+            try
+            {
+                var user = await _userRepository.GetByIdAsync(_userAppContext.CurrentUserId);
+                if (await _profileService.AddNewSkill(skill, user.Id))
+                {
+                    var updatedProfile = await _userRepository.GetByIdAsync(_userAppContext.CurrentUserId);
+                    var skills = updatedProfile.Skills;
+                    return Json(new { Skills = skills });
+                }
+
+            }
+            catch (Exception e)
+            {
+                return Json(new { Success = false, e.Message });
+            }
+            return Json(new { Success = false });
         }
 
         [HttpPost("updateSkill")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "talent")]
         public async Task<IActionResult> UpdateSkill([FromBody]AddSkillViewModel skill)
         {
-            //Your code here;
-            throw new NotImplementedException();
+            try
+            {
+                var user = await _userRepository.GetByIdAsync(_userAppContext.CurrentUserId);
+                if (await _profileService.UpdateSkill(skill, user.Id))
+                {
+                    var updatedProfile = await _userRepository.GetByIdAsync(_userAppContext.CurrentUserId);
+                    var skills = updatedProfile.Skills;
+                    return Json(new { Skills = skills });
+                }
+
+            }
+            catch (Exception e)
+            {
+                return Json(new { Success = false, e.Message });
+            }
+            return Json(new { Success = false });
         }
 
         [HttpPost("deleteSkill")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "talent")]
         public async Task<IActionResult> DeleteSkill([FromBody]AddSkillViewModel skill)
         {
-            //Your code here;
-            throw new NotImplementedException();
+            try
+            {
+                var user = await _userRepository.GetByIdAsync(_userAppContext.CurrentUserId);
+                if (await _profileService.DeleteSkill(skill, user.Id))
+                {
+                    var updatedProfile = await _userRepository.GetByIdAsync(_userAppContext.CurrentUserId);
+                    var skills = updatedProfile.Skills;
+                    return Json(new {Skills = skills });
+                }
+
+            }
+            catch (Exception e)
+            {
+                return Json(new { Success = false, e.Message });
+            }
+            return Json(new { Success = false });
         }
 
         [HttpGet("getCertification")]

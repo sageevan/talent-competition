@@ -1,7 +1,11 @@
 ﻿/* Social media JSX */
 import React from 'react';
 import { ChildSingleInput } from '../Form/SingleInput.jsx';
+import { GithubLoginButton } from "react-social-login-buttons";
+import { LinkedInLoginButton } from "react-social-login-buttons";
+import validator from 'validator';
 import { Popup } from 'semantic-ui-react';
+//import { LinkedIn } from '../../../../../../../node_modules/@mui/icons-material/index.js';
 
 export default class SocialMediaLinkedAccount extends React.Component {
     constructor(props) {
@@ -52,11 +56,14 @@ export default class SocialMediaLinkedAccount extends React.Component {
     }
 
     saveLinks() {
-        console.log(this.props.componentId)
-        console.log(this.state.newLinks)
         const data = Object.assign(this.props.linkedAccounts, this.state.newLinks)
-        this.props.saveProfileData(this.props.componentId, data)
-        this.closeEdit()
+        console.log(data)
+        if (!validator.isURL(data.linkedIn) || !validator.isURL(data.github)) {
+            TalentUtil.notification.show("Enter valid URLs before save!", "error", null, null)
+        } else {
+            this.props.saveProfileData(this.props.componentId, data)
+            this.closeEdit()
+        }
     }
 
 
@@ -100,15 +107,14 @@ export default class SocialMediaLinkedAccount extends React.Component {
         let github = this.props.linkedAccounts.github ? `${this.props.linkedAccounts.github}` : ""
 
         return (
-            <div className='row'>
-                <div className="ui sixteen wide column">
-                    <React.Fragment>
-                        <p>Linked In: {linkedIn}</p>
-                        <p>Github: {github}</p>
-                    </React.Fragment>
-                    <button type="button" className="ui right floated teal button" onClick={this.openEdit}>Edit</button>
+            <div className='ui sixteen wide column'>
+                <a href={linkedIn}><LinkedInLoginButton className="social-media-linkedin" text="LinkedIn" size="25px" iconSize="15px"/></a>
+                <a href={github}><GithubLoginButton  className="social-media-github" text="GitHub" size="25px" iconSize="15px"/> </a>   
+                        <button type="button" className="ui right floated teal button" onClick={this.openEdit}>Edit</button>
+
                 </div>
-            </div>
+
         )
+
     }
 }

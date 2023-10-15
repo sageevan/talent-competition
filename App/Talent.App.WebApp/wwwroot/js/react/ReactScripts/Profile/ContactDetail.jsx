@@ -2,6 +2,7 @@
 import Cookies from 'js-cookie';
 import { ChildSingleInput } from '../Form/SingleInput.jsx';
 import { Location } from '../Employer/CreateJob/Location.jsx';
+import validator from 'validator';
 export class IndividualDetailSection extends Component {
     constructor(props) {
         super(props)
@@ -54,8 +55,23 @@ export class IndividualDetailSection extends Component {
         console.log(this.props.componentId)
         console.log(this.state.newContact)
         const data = Object.assign({}, this.state.newContact)
-        this.props.controlFunc(this.props.componentId, data)
-        this.closeEdit()
+        if (data.firstName == '' || data.lastName == '' || data.email == '' || data.phone=='') {
+            TalentUtil.notification.show("Enter your details before save!", "error", null, null)
+
+        }
+        else if (!data.firstName.match(/^[A-Za-z\s]*$/) || !data.lastName.match(/^[A-Za-z\s]*$/)) {
+            TalentUtil.notification.show("Name cannot contains number or special charactors!", "error", null, null)
+        }
+        else if (!validator.isMobilePhone(data.phone)) {
+            TalentUtil.notification.show("Enter a valid phone number before save!", "error", null, null)
+        }
+        else if (!validator.isEmail(data.email)) {
+            TalentUtil.notification.show("Enter a valid email before save!", "error", null, null)
+        }
+        else {
+            this.props.controlFunc(this.props.componentId, data)
+            this.closeEdit()
+        }
     }
 
     render() {

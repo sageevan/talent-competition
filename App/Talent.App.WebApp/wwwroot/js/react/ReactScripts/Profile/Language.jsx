@@ -4,6 +4,9 @@ import Cookies from 'js-cookie';
 import { BsFillTrashFill, BsFillPencilFill } from "react-icons/bs";
 import { ChildSingleInput } from '../Form/SingleInput.jsx';
 import { BodyWrapper, loaderData } from '../Layout/BodyWrapper.jsx';
+import { confirmAlert } from 'react-confirm-alert';
+import Button from 'react-bootstrap/Button';
+import Modal from 'react-bootstrap/Modal';
 
 export default class Language extends React.Component {
     constructor(props) {
@@ -22,21 +25,22 @@ export default class Language extends React.Component {
             addNew: false,
             newLanguage: languagedata,
             updateLanguage: languagedata,
-            languageData: languagedata
+            languageData: languagedata,
+            deleteConfirm: false,
+            currentLanguage: languagedata
         }
         this.handleChange = this.handleChange.bind(this)
-        this.renderAddNew = this.renderAddNew.bind(this)
         this.renderDisplay = this.renderDisplay.bind(this)
         this.addNew = this.addNew.bind(this)
-        this.closeAddNew = this.closeAddNew.bind(this)
         this.saveLanguage = this.saveLanguage.bind(this)
         this.init = this.init.bind(this)
         this.loadData = this.loadData.bind(this)
         this.updateLanguage = this.updateLanguage.bind(this)
         this.deleteLanguage = this.deleteLanguage.bind(this)
-        this.closeUpdate = this.closeUpdate.bind(this)
+        this.onClose = this.onClose.bind(this)
         this.selectLanguageForUpdate = this.selectLanguageForUpdate.bind(this)
         this.handleUpdate = this.handleUpdate.bind(this)
+        this.deleteConfirm = this.deleteConfirm.bind(this)
   
     }
     init() {
@@ -48,7 +52,7 @@ export default class Language extends React.Component {
 
     componentDidMount() {
         this.loadData();
-        this.init();
+        //this.init();
     }
     handleChange(event) {
         const data = Object.assign({}, this.state.newLanguage)
@@ -58,69 +62,74 @@ export default class Language extends React.Component {
         })
     }
     handleUpdate(event) {
-        const data = Object.assign({}, this.state.updateLanguage)
-        data[event.target.name] = event.target.value
+        const language = Object.assign({}, this.state.updateLanguage)
+        language[event.target.name] = event.target.value
         this.setState({
-            updateLanguage: data
+            updateLanguage: language
         })
     }
     addNew() {
-        this.setState({ addNew: true })
+        this.setState({
+            addNew: true,
+            deleteConfirm:false
+        })
     }
     render() {
         return (
-            this.state.addNew ? this.renderAddNew() : this.renderDisplay(this.state.languageData, this.state.editLanguageId, this, this.state.addNew)
+            this.renderDisplay(this.state.languageData, this.state.editLanguageId, this.state.addNew, this.state.deleteConfirm, this.state.currentLanguage)
         )
     }
-    closeAddNew() {
-        this.setState({
-            addNew: false
-        })
-    }
+
     saveLanguage() {
-        this.loadData();
+        //this.loadData();
         const language = { 'name': this.state.newLanguage.name, 'level': this.state.newLanguage.level }
-        // console.log(language)
-        const data = Object.assign({}, language)
-        console.log(data)
-        //data.id = "new";
-        //this.props.updateProfileData(data)
-        var cookies = Cookies.get('talentAuthToken');
-        $.ajax({
-            url: 'http://localhost:60290/profile/profile/addLanguage',
-            headers: {
-                'Authorization': 'Bearer ' + cookies,
-                'Content-Type': 'application/json'
-            },
-            type: "POST",
-            dataType: "json",
-            data: JSON.stringify(data),
-            success: function (res) {
-                let languagedata = null;
-                if (res) {
-                    languagedata = res.languages
-                    console.log("After save", languagedata)
-                    this.setState({
-                        languageData: languagedata
-                    })
+        console.log(language)
+        if (language.name == null || language.level == null) {
+            TalentUtil.notification.show("Enter Language details before save!", "error", null, null)
+        }
+        else {
+            
+            // console.log(language)
+            const data = Object.assign({}, language)
+            console.log(data)
+            //data.id = "new";
+            //this.props.updateProfileData(data)
+            var cookies = Cookies.get('talentAuthToken');
+            $.ajax({
+                url: 'http://localhost:60290/profile/profile/addLanguage',
+                headers: {
+                    'Authorization': 'Bearer ' + cookies,
+                    'Content-Type': 'application/json'
+                },
+                type: "POST",
+                dataType: "json",
+                data: JSON.stringify(data),
+                success: function (res) {
+                    let languagedata = null;
+                    if (res) {
+                        languagedata = res.languages
+                        console.log("After save", languagedata)
+                        this.setState({
+                            languageData: languagedata
+                        })
 
-                    TalentUtil.notification.show("Language added sucessfully", "success", null, null)
+                        TalentUtil.notification.show("Language added sucessfully", "success", null, null)
 
-                } else {
-                    console.log(res.state);
-                    TalentUtil.notification.show("Language did not add successfully", "error", null, null)
+                    } else {
+                        console.log(res.state);
+                        TalentUtil.notification.show("Language did not add successfully", "error", null, null)
+                    }
+
+                }.bind(this),
+                error: function (res, a, b) {
+                    console.log(res)
+                    console.log(a)
+                    console.log(b)
                 }
+            })
 
-            }.bind(this),
-            error: function (res, a, b) {
-                console.log(res)
-                console.log(a)
-                console.log(b)
-            }
-        })
-
-        this.closeAddNew()
- 
+            this.onClose()
+        }
     }
     loadData() {
         var cookies = Cookies.get('talentAuthToken');
@@ -152,53 +161,77 @@ export default class Language extends React.Component {
 
     selectLanguageForUpdate(language) {
         console.log(language)
-        this.setState({ editLanguageId : language.id })
-    }
-
-    updateLanguage() {
-
-         const language = { 'id': this.state.editLanguageId, 'name': this.state.updateLanguage.name, 'level': this.state.updateLanguage.level }
-        const data = Object.assign({}, language)
-        console.log(data)
-        var cookies = Cookies.get('talentAuthToken');
-        $.ajax({
-            url: 'http://localhost:60290/profile/profile/updateLanguage',
-            headers: {
-                'Authorization': 'Bearer ' + cookies,
-                'Content-Type': 'application/json'
-            },
-            type: "POST",
-            dataType: "json",
-            data: JSON.stringify(data),
-            success: function (res) {
-                let languagedata = null;
-                if (res) {
-                    languagedata = res.languages
-                    this.setState({
-                        languageData: languagedata
-                    })
-                    
-                    TalentUtil.notification.show("Language updated sucessfully", "success", null, null)
-
-                } else {
-                    console.log(res.state);
-                    TalentUtil.notification.show("Language did not update successfully", "error", null, null)
-                }
-
-            }.bind(this),
-            error: function (res, a, b) {
-                console.log(res)
-                console.log(a)
-                console.log(b)
-            }
+        this.setState({
+            editLanguageId: language.id,
+            updateLanguage:language
         })
-        this.closeUpdate()
-
     }
 
-    deleteLanguage(data) {
-       // console.log(language)
+    updateLanguage(edittableLanguage) {
+        console.log(edittableLanguage)
+        console.log(this.state.updateLanguage.name)
+        console.log(this.state.updateLanguage.level)
+        if (this.state.updateLanguage.name == null) {
+            this.setState({
+                updateLanguage: {
+                    name: edittableLanguage.language
+                }
+            })
+        }
+        if (this.state.updateLanguage.level == null) {
+            this.setState({
+                updateLanguage: {
+                    level: edittableLanguage.languageLevel
+                }
+            })
+        }
+        if (this.state.updateLanguage.name == null || this.state.updateLanguage.level == null) {
+            TalentUtil.notification.show("Language did not update successfully", "error", null, null)
+        } else {
+            const language = { 'id': this.state.editLanguageId, 'name': this.state.updateLanguage.name, 'level': this.state.updateLanguage.level }
+            const data = Object.assign({}, language)
+            console.log(data)
+            var cookies = Cookies.get('talentAuthToken');
+            $.ajax({
+                url: 'http://localhost:60290/profile/profile/updateLanguage',
+                headers: {
+                    'Authorization': 'Bearer ' + cookies,
+                    'Content-Type': 'application/json'
+                },
+                type: "POST",
+                dataType: "json",
+                data: JSON.stringify(data),
+                success: function (res) {
+                    let languagedata = null;
+                    if (res) {
+                        languagedata = res.languages
+                        this.setState({
+                            languageData: languagedata
+                        })
 
+                        TalentUtil.notification.show("Language updated sucessfully", "success", null, null)
+
+                    } else {
+                        console.log(res.state);
+                        TalentUtil.notification.show("Language did not update successfully", "error", null, null)
+                    }
+
+                }.bind(this),
+                error: function (res, a, b) {
+                    console.log(res)
+                    console.log(a)
+                    console.log(b)
+                }
+            })
+            this.onClose()
+        }
+    }
+
+
+    deleteLanguage() {
+        console.log(this.state.currentLanguage)
+        const language = { 'id': this.state.currentLanguage.id, 'name': this.state.currentLanguage.name, 'level': this.state.currentLanguage.level }
+        const data = Object.assign({}, language)
         var cookies = Cookies.get('talentAuthToken');
         $.ajax({
             url: 'http://localhost:60290/profile/profile/deleteLanguage',
@@ -229,57 +262,89 @@ export default class Language extends React.Component {
                 console.log(b)
             }
         })
+        this.onClose()
+
+
+    }
+    deleteConfirm(data) {
+        console.log(data)
+        this.setState({
+            deleteConfirm: true,
+            currentLanguage: data,
+            addNew: false
+        })
     }
 
-    closeUpdate() {
-        this.setState({ editLanguageId: "" })
+    onClose() {
+        this.setState({
+            editLanguageId: "",
+            deleteConfirm: false,
+            addNew: false
+
+        })
     }
 
-    renderAddNew() {
-        return (
 
-            <div>
-                <div className='ui column'>
-                    <ChildSingleInput
-                        inputType="text"
-                        name="name"
-                        controlFunc={this.handleChange}
-                        maxLength={20}
-                        placeholder="Add Language"
-                        errorMessage="Please enter a valid Language"
-                    />
-                    <select
-                        className="ui right labeled dropdown"
-                        onChange={this.handleChange}                        
-                        name="level">
-                        <option defaultValue hidden>
-                            {'Select Level'}
-                        </option>
-                        <option>Basic</option>
-                        <option>Conversational</option>
-                        <option>Fluent</option>
-                        <option>Native/Bilingual</option>
-                    </select>
-                    <button type="button" className="ui teal button" onClick={this.saveLanguage}>Save</button>
-                    <button type="button" className="ui button" onClick={this.closeAddNew}>Cancel</button>
-                    </div>               
-            </div>
-        )
-        
-    }
-
-    renderDisplay(languages, editId, ctrl, addNew) {
+    renderDisplay(languages, editId, addNew, deleteConfirm, currentLanguage
+) {
         //console.log(languages)
         return (
-            
-               <div className='language-table'>
+
+            <div className='language-table'>
+                {addNew &&
+
+                    <div>
+                        <div className='language-name-input'>
+                            <ChildSingleInput
+                                inputType="text"
+                                name="name"
+                                controlFunc={this.handleChange}
+                                maxLength={20}
+                                placeholder="Add Language"
+                                errorMessage="Please enter a valid Language"
+                            />
+                        </div>
+                        <div className='language-level-input'>
+                            <select
+                                className="ui right labeled dropdown"
+                                onChange={this.handleChange}
+                                name="level">
+                                <option defaultValue hidden>
+                                    {'Select Level'}
+                                </option>
+                                <option>Basic</option>
+                                <option>Conversational</option>
+                                <option>Fluent</option>
+                                <option>Native/Bilingual</option>
+                            </select>
+                        </div>
+                        <div className='language-input-btn'>
+                            <button type="button" className="ui teal button" onClick={this.saveLanguage}>Save</button>
+                            <button type="button" className="ui button" onClick={this.onClose}>Cancel</button>
+                        </div>
+                    </div>
+                }
+
+                {deleteConfirm &&
+
+                    <div>
+                      
+                        <div class="language-delete-body">
+                            <h4 class="language-delete-title">Language Delete Confirmation</h4>
+                                        Are you Sure!!! You want to delete this Language?
+                                    </div>
+                                    <div class="language-delete-footer">
+                            <button type="button" className="ui right floated teal button" onClick={this.deleteLanguage}>Yes</button>
+                            <button type="button" className="ui right floated teal button" onClick={this.onClose}>No</button>
+                                    </div>
+                                </div>
+                }
                     <table class="ui table">
                         <thead>
                             <tr>
-                                <th>Language</th>
-                                <th>Level<button type="button" className="ui right floated teal button" onClick={this.addNew}>+ Add New</button></th>
-                                <th></th>
-                                <th></th>
+                            <th>Language</th>
+                            <th>Level</th>
+                            <th><button type="button" className="ui right floated teal button" onClick={this.addNew}>+ Add New</button></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -287,15 +352,20 @@ export default class Language extends React.Component {
                                 languages.map((language) => (
                                     language.id == editId ?
                                         <tr key={language.id}>
+                                            <td>
+                                                <div className='language-name-update'>
                                             <input
                                                 inputType="text"
                                                 name="name"
                                                 defaultValue={language.language}
-                                                onChange={this.handleUpdate}
+                                                onChange={(e) => this.handleUpdate(e)}
                                                 maxLength={20}
                                                 placeholder="Add Language"
                                                 errorMessage="Please enter a valid Language"></input>
-                                            
+                                            </div>
+                                            </td>
+                                            <td>
+                                            <div className='language-level-update'>
                                             <select
                                                 className="ui right labeled dropdown"
                                                 defaultValue={language.languageLevel}
@@ -305,21 +375,28 @@ export default class Language extends React.Component {
                                                 <option>Conversational</option>
                                                 <option>Fluent</option>
                                                 <option>Native/Bilingual</option>
-                                            </select>
-                                            <td><button type="button" className="ui teal button" onClick={this.updateLanguage}>Save</button></td>
-                                            <td><button type="button" className="ui button" onClick={this.closeUpdate}>Cancel</button></td>
+                                                </select>
+                                                </div>
+                                            </td>
+                                            <td>
+                                            <div className='language-update-btn'>
+                                                    <button type="button" className="ui teal button" onClick={() => { this.updateLanguage(language) }}>Save</button>
+                                             <button type="button" className="ui button" onClick={this.onClose}>Cancel</button>
+                                                </div>
+                                            </td>
                                         </tr>
                                         :
                                         <tr key={language.id}>
                                             <td>{language.language}</td>
                                             <td>{language.languageLevel}</td>
-                                            <td><button type="button" onClick={() => { this.selectLanguageForUpdate(language) }}><BsFillPencilFill /></button></td>
-                                            <td><button type="button" onClick={() => { this.deleteLanguage(language) }}><BsFillTrashFill /></button></td>
+                                            <td><button type="button" className="language-edit-btn" onClick={() => { this.deleteConfirm(language) }}><BsFillTrashFill/></button><button type="button" className="language-edit-btn" onClick={() => { this.selectLanguageForUpdate(language) }}><BsFillPencilFill /></button></td>
                                         </tr>
+
                                 )
                                 )}
                         </tbody>
                     </table>
+                
                 </div>
             
         )

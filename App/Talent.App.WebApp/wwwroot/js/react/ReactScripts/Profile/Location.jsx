@@ -1,6 +1,7 @@
 ﻿import React from 'react'
 import Cookies from 'js-cookie'
 import { default as Countries } from '../../../../util/jsonFiles/countries.json';
+import { default as Nationalities } from '../../../../util/jsonFiles/nationalities.json';
 import { ChildSingleInput } from '../Form/SingleInput.jsx';
 
 export class Address extends React.Component {
@@ -81,20 +82,25 @@ export class Address extends React.Component {
         countriesOptions = Object.keys(Countries).map((x) => <option key={x} value={x}>{x}</option>);
         popCities = selectedCountryOption ? selectedCountryOption.map((x) => <option key={x} value={x}> {x}</option>):"";
         return (
-
-            
+            <div className='contact-address-content'>
             <div className='ui sixteen wide column'>
+            
+                <div className="contact-address-number">
                 <ChildSingleInput
+                    
                     inputType="text"
                     label="Number"
                     name="number"
                     value={this.state.newAddress.number}
                     controlFunc={this.handleChange}
-                    maxLength={80}
+                    maxLength={10}
                     //placeholder=""
                     errorMessage="Please enter a valid street number"
-                />
+                    />
+                </div>
+                <div className="contact-address-street">
                 <ChildSingleInput
+                    
                     inputType="text"
                     label="Street"
                     name="street"
@@ -103,49 +109,59 @@ export class Address extends React.Component {
                     maxLength={80}
                     //placeholder=""
                     errorMessage="Please enter a valid street name"
-                />
+                    />
+                </div>
+                <div className="contact-address-suburb">
                 <ChildSingleInput
+                    
                     inputType="text"
                     label="Suburb"
                     name="suburb"
                     value={this.state.newAddress.suburb}
                     controlFunc={this.handleChange}
-                    maxLength={80}
+                    maxLength={10}
                     //placeholder=""
                     errorMessage="Please enter a valid suburb"
                 />
+                    </div>
+
+                <div className="contact-address-country">
+                <label>Select a Country</label>
+                <select
+                    value={selectedCountry}
+                    onChange={this.handleChange}
+                    name="country">
+                    {countriesOptions}
+                    </select>
+                </div>
+                <div className="contact-address-city">
+                    <label>Select a City</label>
+                <select
+                    value={selectedCity}
+                    onChange={this.handleChange}
+                    name="city">
+                    {popCities}
+                    </select>
+                </div>
+                <div className="contact-address-postcode">
                 <ChildSingleInput
+                    
                     inputType="text"
                     label="Post Code"
                     name="postCode"
                     value={this.state.newAddress.postCode}
                     controlFunc={this.handleChange}
-                    maxLength={80}
+                    maxLength={10}
                     //placeholder=""
                     errorMessage="Please enter a valid post code"
-                />
-                <label>Select a country</label>
-                <select 
-                className="ui right labeled dropdown"
-                    value={selectedCountry}
-                    onChange={this.handleChange}
-                    name="country">Select Country
-                    {countriesOptions}
-                </select>
-                <br></br>
-                <label>Select a town or city</label>
-                <select
-                    className="ui dropdown"
-                    value={selectedCity}
-                    onChange={this.handleChange}
-                    name="city">Select City
-                    {popCities}
-                </select>
-                <br></br>
-                
-                <button type="button" className="ui teal button" onClick={this.saveAddress}>Save</button>
-                <button type="button" className="ui button" onClick={this.closeEdit}>Cancel</button>
-            </div>
+                    />
+                    </div>
+                    <div className="contact-address-btn">
+                <button type="button" className="ui floated left teal button" onClick={this.saveAddress}>Save</button>
+                        <button type="button" className="ui button" onClick={this.closeEdit}>Cancel</button>
+                    </div>
+                </div>
+</div>
         )
     }
 
@@ -206,6 +222,8 @@ export class Nationality extends React.Component {
 
     
     render() {
+        let nationalityOptions = [];
+        nationalityOptions = Nationalities.map((x) => <option key={x} value={x}>{x}</option>);
         const selectedNationality = this.props.nationalityData
         return (
             <div className='ui sixteen wide column'>
@@ -214,10 +232,7 @@ export class Nationality extends React.Component {
                     value={selectedNationality}
                     onChange={this.handleChange}
                     name="nationality">
-                    <option key="1">1</option>
-                    <option key="2">2</option>
-                    <option key="3">3</option>
-                <option key="4">4</option>
+                    {nationalityOptions}
                 </select>
             </div>
         )

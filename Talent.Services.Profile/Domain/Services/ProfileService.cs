@@ -49,9 +49,7 @@ namespace Talent.Services.Profile.Domain.Services
         {
             try
             {
-                // {
-                //Your code here;
-                //var newLanguage = new List<UserLanguage>();
+           
                 var newlanguage = new UserLanguage
                 {
                     Id = ObjectId.GenerateNewId().ToString(),
@@ -60,15 +58,10 @@ namespace Talent.Services.Profile.Domain.Services
                     UserId = userId,
                     IsDeleted = false
                 };
-                //     }
-                //     AddLanguageViewLanguage(item, language);
-                // newLanguage.Add(newlanguage);
-                // 
-                 //_userLanguageRepository.Add(newlanguage);
+
                 var user =await _userRepository.GetByIdAsync(userId);
                 user.Languages.Add(newlanguage);
                 await _userRepository.Update(user);
-                //Result.Languages.Add(newlanguage);
                 return true;
             }
             catch (MongoException e)
@@ -91,7 +84,6 @@ namespace Talent.Services.Profile.Domain.Services
                 UserLanguage deleteLanguage = user.Languages.Where(x => x.Id == deletelanguage.Id).FirstOrDefault();
                 user.Languages.Remove(deleteLanguage);
                 await _userRepository.Update(user);
-                //Result.Languages.Add(newlanguage);
                 return true;
             }
             catch (MongoException e)
@@ -118,9 +110,6 @@ namespace Talent.Services.Profile.Domain.Services
                 user.Languages.Remove(updateLanguage);
                 user.Languages.Add(updatelanguage);
                 await _userRepository.Update(user);
-
-               
-                //Result.Languages.Add(newlanguage);
                 return true;
             }
             catch (MongoException e)
@@ -128,6 +117,81 @@ namespace Talent.Services.Profile.Domain.Services
                 return false;
             }
         }
+
+
+        public async Task<bool> AddNewSkill(AddSkillViewModel skill, String userId)
+        {
+            try
+            {
+
+                var newskill = new UserSkill
+                {
+                    Id = ObjectId.GenerateNewId().ToString(),
+                    ExperienceLevel = skill.Level,
+                    Skill = skill.Name,
+                    UserId = userId,
+                    IsDeleted = false
+                };
+
+                var user = await _userRepository.GetByIdAsync(userId);
+                user.Skills.Add(newskill);
+                await _userRepository.Update(user);
+                return true;
+            }
+            catch (MongoException e)
+            {
+                return false;
+            }
+        }
+
+        public async Task<bool> DeleteSkill(AddSkillViewModel skill, String userId)
+        {
+            try
+            {
+
+                var deleteSkill = new UserSkill
+                {
+                    Id = skill.Id,
+                };
+
+                var user = await _userRepository.GetByIdAsync(userId);
+                UserSkill deleteskill = user.Skills.Where(x => x.Id == deleteSkill.Id).FirstOrDefault();
+                user.Skills.Remove(deleteskill);
+                await _userRepository.Update(user);
+                return true;
+            }
+            catch (MongoException e)
+            {
+                return false;
+            }
+        }
+
+        public async Task<bool> UpdateSkill(AddSkillViewModel skill, String userId)
+        {
+            try
+            {
+                var updateskill = new UserSkill
+                {
+                    Id = skill.Id,
+                    ExperienceLevel = skill.Level,
+                    Skill = skill.Name,
+                    UserId = userId,
+                    IsDeleted = false
+                };
+
+                var user = await _userRepository.GetByIdAsync(userId);
+                UserSkill updateSkill = user.Skills.Where(x => x.Id == updateskill.Id).FirstOrDefault();
+                user.Skills.Remove(updateSkill);
+                user.Skills.Add(updateskill);
+                await _userRepository.Update(user);
+                return true;
+            }
+            catch (MongoException e)
+            {
+                return false;
+            }
+        }
+
 
         public async Task<TalentProfileViewModel> GetTalentProfile(string Id)
         {
