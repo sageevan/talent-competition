@@ -55,7 +55,7 @@ export class IndividualDetailSection extends Component {
         console.log(this.props.componentId)
         console.log(this.state.newContact)
         const data = Object.assign({}, this.state.newContact)
-        if (data.firstName == '' || data.lastName == '' || data.email == '' || data.phone=='') {
+        if (data.firstName == '' || data.lastName == '' || data.email == '' || data.phone == '' || data.firstName == null || data.lastName == null || data.email == null || data.phone == null) {
             TalentUtil.notification.show("Enter your details before save!", "error", null, null)
 
         }

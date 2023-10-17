@@ -8,45 +8,44 @@
 .ui table th{
     width:30%;
 }
-.language-table {
+.profile-data-table {
     width: 100%;
     margin-top: 10px;
     margin-bottom: 10px;
 }
 
-    .language-name-input {
-        margin-right: 10px;
-        float: left;
-        width: 30%;
-        margin-top:-4px;
-    }
-.language-level-input {
-    margin-right:10px;
+.profile-data-name-input {
+    margin-right: 10px;
+    float: left;
+    width: 30%;
+    margin-top: -4px;
+}
+.profile-data-level-input {
+    margin-right: 10px;
     float: left;
     width: 30%;
 }
-.language-name-update {
+.profile-data-name-update {
     float: left;
     width: 60%;
 }
-.language-level-update {
+.profile-data-level-update {
     float: left;
     width: 60%;
 }
-.language-update-btn {
-    float:left;
+.profile-data-update-btn {
+    float: left;
 }
-.language-input-btn {
-}
-.language-delete-body {
+
+.profile-data-delete-body {
     color: red;
 }
-.language-delete-footer {
-    margin-bottom: 20px;
-}
-.language-edit-btn{
-    float:right;
-    margin-left:5px;
+    .profile-data-delete-footer {
+        margin-bottom: 60px;
+    }
+.profile-data-edit-btn {
+    float: right;
+    margin-left: 5px;
 }
 
 .social-media-linkedin {

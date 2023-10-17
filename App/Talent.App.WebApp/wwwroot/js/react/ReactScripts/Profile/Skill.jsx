@@ -21,7 +21,6 @@ export default class Skill extends React.Component {
             loaderData: loaderData,
             addNew: false,
             newSkill: skilldata,
-            updateLanguage: skilldata,
             skillData: skilldata,
             deleteConfirm: false,
             currentSkill: skilldata
@@ -36,7 +35,6 @@ export default class Skill extends React.Component {
         this.deleteSkill = this.deleteSkill.bind(this)
         this.onClose = this.onClose.bind(this)
         this.selectSkillForUpdate = this.selectSkillForUpdate.bind(this)
-        this.handleUpdate = this.handleUpdate.bind(this)
         this.deleteConfirm = this.deleteConfirm.bind(this)
 
     }
@@ -58,13 +56,6 @@ export default class Skill extends React.Component {
             newSkill: data
         })
     }
-    handleUpdate(event) {
-        const data = Object.assign({}, this.state.updateSkill)
-        data[event.target.name] = event.target.value
-        this.setState({
-            updateSkill: data
-        })
-    }
     addNew() {
         this.setState({
             addNew: true,
@@ -78,49 +69,50 @@ export default class Skill extends React.Component {
     }
 
     saveSkill() {
-        this.loadData();
+
         const skill = { 'name': this.state.newSkill.name, 'level': this.state.newSkill.level }
-        // console.log(language)
-        const data = Object.assign({}, skill)
-        console.log(data)
-        //data.id = "new";
-        //this.props.updateProfileData(data)
-        var cookies = Cookies.get('talentAuthToken');
-        $.ajax({
-            url: 'http://localhost:60290/profile/profile/addSkill',
-            headers: {
-                'Authorization': 'Bearer ' + cookies,
-                'Content-Type': 'application/json'
-            },
-            type: "POST",
-            dataType: "json",
-            data: JSON.stringify(data),
-            success: function (res) {
-                let skilldata = null;
-                if (res) {
-                    skilldata = res.skills
-                    console.log("After save", skilldata)
-                    this.setState({
-                        skillData: skilldata
-                    })
+        if (skill.name == null || skill.level == null || skill.name == '' || skill.level == '') {
+            TalentUtil.notification.show("Enter skill details before save!", "error", null, null)
+        }
+        else {
+            const data = Object.assign({}, skill)
+            console.log(data)
+            var cookies = Cookies.get('talentAuthToken');
+            $.ajax({
+                url: 'http://localhost:60290/profile/profile/addSkill',
+                headers: {
+                    'Authorization': 'Bearer ' + cookies,
+                    'Content-Type': 'application/json'
+                },
+                type: "POST",
+                dataType: "json",
+                data: JSON.stringify(data),
+                success: function (res) {
+                    let skilldata = null;
+                    if (res) {
+                        skilldata = res.skills
+                        console.log("After save", skilldata)
+                        this.setState({
+                            skillData: skilldata
+                        })
 
-                    TalentUtil.notification.show("Skill added sucessfully", "success", null, null)
+                        TalentUtil.notification.show("Skill added sucessfully", "success", null, null)
 
-                } else {
-                    console.log(res.state);
-                    TalentUtil.notification.show("Skill did not add successfully", "error", null, null)
+                    } else {
+                        console.log(res.state);
+                        TalentUtil.notification.show("Skill did not add successfully", "error", null, null)
+                    }
+
+                }.bind(this),
+                error: function (res, a, b) {
+                    console.log(res)
+                    console.log(a)
+                    console.log(b)
                 }
+            })
 
-            }.bind(this),
-            error: function (res, a, b) {
-                console.log(res)
-                console.log(a)
-                console.log(b)
-            }
-        })
-
-        this.onClose()
-
+            this.onClose()
+        }
     }
     loadData() {
         var cookies = Cookies.get('talentAuthToken');
@@ -151,49 +143,55 @@ export default class Skill extends React.Component {
     }
 
     selectSkillForUpdate(skill) {
-        console.log(skill)
-        this.setState({ editSkillId: skill.id })
+        //console.log(skill)
+        this.setState({
+            editSkillId: skill.id,
+            currentSkill : skill
+        })
     }
 
-    updateSkill() {
+    updateSkill(currentSkill) {
+        if (currentSkill.skill == null || currentSkill.experienceLevel == null || currentSkill.skill == '' || currentSkill.experienceLevel == '') {
+            TalentUtil.notification.show("Enter skill details before update!", "error", null, null)
+        }
+        else {
+            const skill = { 'id': this.state.editSkillId, 'name': currentSkill.skill, 'level': currentSkill.experienceLevel }
+            const data = Object.assign({}, skill)
+            console.log(data)
+            var cookies = Cookies.get('talentAuthToken');
+            $.ajax({
+                url: 'http://localhost:60290/profile/profile/updateSkill',
+                headers: {
+                    'Authorization': 'Bearer ' + cookies,
+                    'Content-Type': 'application/json'
+                },
+                type: "POST",
+                dataType: "json",
+                data: JSON.stringify(data),
+                success: function (res) {
+                    let skilldata = null;
+                    if (res) {
+                        skilldata = res.skills
+                        this.setState({
+                            skillData: skilldata
+                        })
 
-        const skill = { 'id': this.state.editSkillId, 'name': this.state.updateSkill.name, 'level': this.state.updateSkill.level }
-        const data = Object.assign({}, skill)
-        console.log(data)
-        var cookies = Cookies.get('talentAuthToken');
-        $.ajax({
-            url: 'http://localhost:60290/profile/profile/updateSkill',
-            headers: {
-                'Authorization': 'Bearer ' + cookies,
-                'Content-Type': 'application/json'
-            },
-            type: "POST",
-            dataType: "json",
-            data: JSON.stringify(data),
-            success: function (res) {
-                let skilldata = null;
-                if (res) {
-                    skilldata = res.skills
-                    this.setState({
-                        skillData: skilldata
-                    })
+                        TalentUtil.notification.show("Skill updated sucessfully", "success", null, null)
 
-                    TalentUtil.notification.show("Skill updated sucessfully", "success", null, null)
+                    } else {
+                        console.log(res.state);
+                        TalentUtil.notification.show("Skill did not update successfully", "error", null, null)
+                    }
 
-                } else {
-                    console.log(res.state);
-                    TalentUtil.notification.show("Skill did not update successfully", "error", null, null)
+                }.bind(this),
+                error: function (res, a, b) {
+                    console.log(res)
+                    console.log(a)
+                    console.log(b)
                 }
-
-            }.bind(this),
-            error: function (res, a, b) {
-                console.log(res)
-                console.log(a)
-                console.log(b)
-            }
-        })
-        this.onClose()
-
+            })
+            this.onClose()
+        }
     }
 
 
@@ -253,15 +251,15 @@ export default class Skill extends React.Component {
         })
     }
 
-    renderDisplay(skills, editId, addNew, deleteConfirm, currentskill) {
+    renderDisplay(skills, editId, addNew, deleteConfirm, currentSkill) {
         //console.log(languages)
         return (
 
-            <div className='language-table'>
+            <div className='profile-data-table'>
                 {addNew &&
 
                     <div>
-                        <div className='ui column'>
+                        <div className='profile-data-name-input'>
                             <ChildSingleInput
                                 inputType="text"
                                 name="name"
@@ -270,6 +268,8 @@ export default class Skill extends React.Component {
                                 placeholder="Add Skill"
                                 errorMessage="Please enter a valid Skill"
                             />
+                        </div>
+                        <div className='profile-data-level-input'>
                             <select
                                 className="ui right labeled dropdown"
                                 onChange={this.handleChange}
@@ -281,6 +281,8 @@ export default class Skill extends React.Component {
                                 <option>Intermediate</option>
                                 <option>Expert</option>
                             </select>
+                        </div>
+                        <div className='profile-data-input-btn'>
                             <button type="button" className="ui teal button" onClick={this.saveSkill}>Save</button>
                             <button type="button" className="ui button" onClick={this.onClose}>Cancel</button>
                         </div>
@@ -291,11 +293,11 @@ export default class Skill extends React.Component {
 
                     <div>
 
-                        <div class="delete-body">
+                        <div class="profile-data-delete-body">
                             <h4 class="delete-title">Skill Delete Confirmation</h4>
                             Are you Sure!!! You want to delete this Skill?
                         </div>
-                        <div class="delete-footer">
+                        <div class="profile-data-delete-footer">
                             <button type="button" className="ui right floated teal button" onClick={this.deleteSkill}>Yes</button>
                             <button type="button" className="ui right floated teal button" onClick={this.onClose}>No</button>
                         </div>
@@ -305,9 +307,8 @@ export default class Skill extends React.Component {
                     <thead>
                         <tr>
                             <th>Skill</th>
-                            <th>Level<button type="button" className="ui right floated teal button" onClick={this.addNew}>+ Add New</button></th>
-                            <th></th>
-                            <th></th>
+                            <th>Level</th>
+                            <th><button type="button" className="ui right floated teal button" onClick={this.addNew}>+ Add New</button></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -315,33 +316,46 @@ export default class Skill extends React.Component {
                             skills.map((skill) => (
                                 skill.id == editId ?
                                     <tr key={skill.id}>
+                                        <td>
+                                            <div className='profile-data-name-update'>
                                         <input
                                             inputType="text"
                                             name="name"
-                                            defaultValue={skill.skill}
-                                            onChange={this.handleUpdate}
+                                            defaultValue={currentSkill.skill}
+                                                    onChange={(event) => { currentSkill.skill = event.target.value; }}
                                             maxLength={20}
                                             placeholder="Add Skill"
                                             errorMessage="Please enter a valid Skill"></input>
-
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div className='profile-data-level-update'>
                                         <select
                                             className="ui right labeled dropdown"
-                                            defaultValue={skill.experienceLevel}
-                                            onChange={(e) => this.handleUpdate(e)}
+                                                    defaultValue={currentSkill.experienceLevel}
+                                                    onChange={(event) => { currentSkill.experienceLevel = event.target.value; }}
                                             name="level">
                                             <option>Beginner</option>
                                             <option>Intermediate</option>
                                             <option>Expert</option>
-                                        </select>
-                                        <td><button type="button" className="ui teal button" onClick={this.updateSkill}>Save</button></td>
-                                        <td><button type="button" className="ui button" onClick={this.onClose}>Cancel</button></td>
-                                    </tr>
+                                                </select>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div className='profile-data-update-btn'>
+
+                                        <button type="button" className="ui teal button" onClick={() => { this.updateSkill(currentSkill)}}>Save</button>
+                                        <button type="button" className="ui button" onClick={this.onClose}>Cancel</button>
+                                    </div>
+                                            </td>
+                </tr>
                                     :
                                     <tr key={skill.id}>
                                         <td>{skill.skill}</td>
                                         <td>{skill.experienceLevel}</td>
-                                        <td><button type="button" onClick={() => { this.selectSkillForUpdate(skill) }}><BsFillPencilFill /></button></td>
-                                        <td><button type="button" onClick={() => { this.deleteConfirm(skill) }}><BsFillTrashFill /></button></td>
+                                        <td><button type="button" className="profile-data-edit-btn" onClick={() => { this.deleteConfirm(skill) }}><BsFillTrashFill /></button>
+                                            <button type="button" className="profile-data-edit-btn" onClick={() => { this.selectSkillForUpdate(skill) }}><BsFillPencilFill /></button>
+                                            </td>
                                     </tr>
 
                             )

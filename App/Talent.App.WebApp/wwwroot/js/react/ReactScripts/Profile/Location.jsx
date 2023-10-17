@@ -130,7 +130,8 @@ export class Address extends React.Component {
                 <select
                     value={selectedCountry}
                     onChange={this.handleChange}
-                    name="country">
+                            name="country">
+                    <option>Select a Country</option>
                     {countriesOptions}
                     </select>
                 </div>
@@ -139,7 +140,8 @@ export class Address extends React.Component {
                 <select
                     value={selectedCity}
                     onChange={this.handleChange}
-                    name="city">
+                            name="city">
+                            <option>Select a City</option>
                     {popCities}
                     </select>
                 </div>

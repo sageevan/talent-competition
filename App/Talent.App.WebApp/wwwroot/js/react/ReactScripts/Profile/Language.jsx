@@ -24,10 +24,9 @@ export default class Language extends React.Component {
             loaderData: loaderData,
             addNew: false,
             newLanguage: languagedata,
-            updateLanguage: languagedata,
             languageData: languagedata,
             deleteConfirm: false,
-            currentLanguage: languagedata
+            currentLanguage: {}
         }
         this.handleChange = this.handleChange.bind(this)
         this.renderDisplay = this.renderDisplay.bind(this)
@@ -39,7 +38,6 @@ export default class Language extends React.Component {
         this.deleteLanguage = this.deleteLanguage.bind(this)
         this.onClose = this.onClose.bind(this)
         this.selectLanguageForUpdate = this.selectLanguageForUpdate.bind(this)
-        this.handleUpdate = this.handleUpdate.bind(this)
         this.deleteConfirm = this.deleteConfirm.bind(this)
   
     }
@@ -61,13 +59,6 @@ export default class Language extends React.Component {
             newLanguage: data
         })
     }
-    handleUpdate(event) {
-        const language = Object.assign({}, this.state.updateLanguage)
-        language[event.target.name] = event.target.value
-        this.setState({
-            updateLanguage: language
-        })
-    }
     addNew() {
         this.setState({
             addNew: true,
@@ -84,16 +75,13 @@ export default class Language extends React.Component {
         //this.loadData();
         const language = { 'name': this.state.newLanguage.name, 'level': this.state.newLanguage.level }
         console.log(language)
-        if (language.name == null || language.level == null) {
+        if (language.name == null || language.level == null || language.name == '' || language.level == '') {
             TalentUtil.notification.show("Enter Language details before save!", "error", null, null)
         }
         else {
             
-            // console.log(language)
             const data = Object.assign({}, language)
             console.log(data)
-            //data.id = "new";
-            //this.props.updateProfileData(data)
             var cookies = Cookies.get('talentAuthToken');
             $.ajax({
                 url: 'http://localhost:60290/profile/profile/addLanguage',
@@ -160,35 +148,19 @@ export default class Language extends React.Component {
     }
 
     selectLanguageForUpdate(language) {
-        console.log(language)
+       // console.log(language)
         this.setState({
             editLanguageId: language.id,
-            updateLanguage:language
+            currentLanguage : language,
         })
     }
 
-    updateLanguage(edittableLanguage) {
-        console.log(edittableLanguage)
-        console.log(this.state.updateLanguage.name)
-        console.log(this.state.updateLanguage.level)
-        if (this.state.updateLanguage.name == null) {
-            this.setState({
-                updateLanguage: {
-                    name: edittableLanguage.language
-                }
-            })
+    updateLanguage(currentLanguage) {
+        if (currentLanguage.language == null || currentLanguage.languageLevel == null || currentLanguage.language == '' || currentLanguage.languageLevel == '') {
+            TalentUtil.notification.show("Enter Language details before update!", "error", null, null)
         }
-        if (this.state.updateLanguage.level == null) {
-            this.setState({
-                updateLanguage: {
-                    level: edittableLanguage.languageLevel
-                }
-            })
-        }
-        if (this.state.updateLanguage.name == null || this.state.updateLanguage.level == null) {
-            TalentUtil.notification.show("Language did not update successfully", "error", null, null)
-        } else {
-            const language = { 'id': this.state.editLanguageId, 'name': this.state.updateLanguage.name, 'level': this.state.updateLanguage.level }
+        else {
+            const language = { 'id': this.state.editLanguageId, 'name': currentLanguage.language, 'level': currentLanguage.languageLevel }
             const data = Object.assign({}, language)
             console.log(data)
             var cookies = Cookies.get('talentAuthToken');
@@ -229,7 +201,6 @@ export default class Language extends React.Component {
 
 
     deleteLanguage() {
-        console.log(this.state.currentLanguage)
         const language = { 'id': this.state.currentLanguage.id, 'name': this.state.currentLanguage.name, 'level': this.state.currentLanguage.level }
         const data = Object.assign({}, language)
         var cookies = Cookies.get('talentAuthToken');
@@ -290,11 +261,11 @@ export default class Language extends React.Component {
         //console.log(languages)
         return (
 
-            <div className='language-table'>
+            <div className='profile-data-table'>
                 {addNew &&
 
                     <div>
-                        <div className='language-name-input'>
+                        <div className='profile-data-name-input'>
                             <ChildSingleInput
                                 inputType="text"
                                 name="name"
@@ -304,7 +275,7 @@ export default class Language extends React.Component {
                                 errorMessage="Please enter a valid Language"
                             />
                         </div>
-                        <div className='language-level-input'>
+                        <div className='profile-data-level-input'>
                             <select
                                 className="ui right labeled dropdown"
                                 onChange={this.handleChange}
@@ -318,7 +289,7 @@ export default class Language extends React.Component {
                                 <option>Native/Bilingual</option>
                             </select>
                         </div>
-                        <div className='language-input-btn'>
+                        <div className='profile-data-input-btn'>
                             <button type="button" className="ui teal button" onClick={this.saveLanguage}>Save</button>
                             <button type="button" className="ui button" onClick={this.onClose}>Cancel</button>
                         </div>
@@ -329,11 +300,11 @@ export default class Language extends React.Component {
 
                     <div>
                       
-                        <div class="language-delete-body">
+                        <div class="profile-data-delete-body">
                             <h4 class="language-delete-title">Language Delete Confirmation</h4>
                                         Are you Sure!!! You want to delete this Language?
                                     </div>
-                                    <div class="language-delete-footer">
+                        <div class="profile-data-delete-footer">
                             <button type="button" className="ui right floated teal button" onClick={this.deleteLanguage}>Yes</button>
                             <button type="button" className="ui right floated teal button" onClick={this.onClose}>No</button>
                                     </div>
@@ -353,23 +324,23 @@ export default class Language extends React.Component {
                                     language.id == editId ?
                                         <tr key={language.id}>
                                             <td>
-                                                <div className='language-name-update'>
+                                                <div className='profile-data-name-update'>
                                             <input
                                                 inputType="text"
                                                 name="name"
-                                                defaultValue={language.language}
-                                                onChange={(e) => this.handleUpdate(e)}
+                                                        defaultValue={currentLanguage.language}
+                                                        onChange={(event) => { currentLanguage.language = event.target.value; }}
                                                 maxLength={20}
                                                 placeholder="Add Language"
                                                 errorMessage="Please enter a valid Language"></input>
                                             </div>
                                             </td>
                                             <td>
-                                            <div className='language-level-update'>
+                                                <div className='profile-data-level-update'>
                                             <select
-                                                className="ui right labeled dropdown"
-                                                defaultValue={language.languageLevel}
-                                                onChange={(e) => this.handleUpdate(e)}
+                                                        className="ui right labeled dropdown"
+                                                        defaultValue={currentLanguage.languageLevel}
+                                                        onChange={(event) => { currentLanguage.languageLevel = event.target.value; }}
                                                 name="level">
                                                 <option>Basic</option>
                                                 <option>Conversational</option>
@@ -379,8 +350,8 @@ export default class Language extends React.Component {
                                                 </div>
                                             </td>
                                             <td>
-                                            <div className='language-update-btn'>
-                                                    <button type="button" className="ui teal button" onClick={() => { this.updateLanguage(language) }}>Save</button>
+                                                <div className='profile-data-update-btn'>
+                                                    <button type="button" className="ui teal button" onClick={() => { this.updateLanguage(currentLanguage) }}>Save</button>
                                              <button type="button" className="ui button" onClick={this.onClose}>Cancel</button>
                                                 </div>
                                             </td>
@@ -389,7 +360,8 @@ export default class Language extends React.Component {
                                         <tr key={language.id}>
                                             <td>{language.language}</td>
                                             <td>{language.languageLevel}</td>
-                                            <td><button type="button" className="language-edit-btn" onClick={() => { this.deleteConfirm(language) }}><BsFillTrashFill/></button><button type="button" className="language-edit-btn" onClick={() => { this.selectLanguageForUpdate(language) }}><BsFillPencilFill /></button></td>
+                                            <td><button type="button" className="profile-data-edit-btn" onClick={() => { this.deleteConfirm(language) }}><BsFillTrashFill /></button>
+                                                <button type="button" className="profile-data-edit-btn" onClick={() => { this.selectLanguageForUpdate(language) }}><BsFillPencilFill /></button></td>
                                         </tr>
 
                                 )
@@ -404,6 +376,3 @@ export default class Language extends React.Component {
 }
 
                                                         
-
-                                                   // <td><button className="btn-edit" onClick={() => { ctrl.updateCustomer(customer) }}><BsFillPencilFill /></button></td>
-                                //<td><button className="btn-delete" onClick={() => { ctrl.deleteCustomerRequest(customer) }}><BsFillTrashFill /></button></td>
