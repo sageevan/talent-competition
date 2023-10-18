@@ -301,6 +301,25 @@ namespace Talent.Services.Profile.Controllers
             return Json(new { Success = false });
         }
 
+        [HttpGet("getExperience")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "talent")]
+        public async Task<IActionResult> getExperience()
+        {
+            {
+                try
+                {
+                    var userId = _userAppContext.CurrentUserId;
+                    var user = await _userRepository.GetByIdAsync(userId);
+                    var experience = user.Experience;
+                    return Json(new { Experience = experience });
+                }
+                catch (Exception e)
+                {
+                    return Json(new { Success = false, e.Message });
+                }
+            }
+        }
+
         [HttpGet("getCertification")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "talent")]
         public async Task<IActionResult> getCertification()

@@ -110,7 +110,9 @@ export default class Skill extends React.Component {
                     console.log(b)
                 }
             })
-
+            this.setState({
+                newSkill: {}
+            })
             this.onClose()
         }
     }
@@ -249,6 +251,7 @@ export default class Skill extends React.Component {
             addNew: false
 
         })
+        this.loadData();
     }
 
     renderDisplay(skills, editId, addNew, deleteConfirm, currentSkill) {
@@ -342,10 +345,10 @@ export default class Skill extends React.Component {
                                             </div>
                                         </td>
                                         <td>
-                                            <div className='profile-data-update-btn'>
+                                            <div className='profile-data-update-btns'>
 
-                                        <button type="button" className="ui teal button" onClick={() => { this.updateSkill(currentSkill)}}>Save</button>
-                                        <button type="button" className="ui button" onClick={this.onClose}>Cancel</button>
+                                                <button type="button" className="profile-data-update-btn" onClick={() => { this.updateSkill(currentSkill)}}>Update</button>
+                                                <button type="button" className="profile-data-cancel-btn" onClick={this.onClose}>Cancel</button>
                                     </div>
                                             </td>
                 </tr>

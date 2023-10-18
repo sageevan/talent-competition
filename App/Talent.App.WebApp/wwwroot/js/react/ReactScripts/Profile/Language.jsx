@@ -115,7 +115,9 @@ export default class Language extends React.Component {
                     console.log(b)
                 }
             })
-
+            this.setState({
+                newLanguage: {}
+            })
             this.onClose()
         }
     }
@@ -253,12 +255,11 @@ export default class Language extends React.Component {
             addNew: false
 
         })
+        this.loadData();
     }
 
 
-    renderDisplay(languages, editId, addNew, deleteConfirm, currentLanguage
-) {
-        //console.log(languages)
+    renderDisplay(languages, editId, addNew, deleteConfirm, currentLanguage) {
         return (
 
             <div className='profile-data-table'>
@@ -350,9 +351,9 @@ export default class Language extends React.Component {
                                                 </div>
                                             </td>
                                             <td>
-                                                <div className='profile-data-update-btn'>
-                                                    <button type="button" className="ui teal button" onClick={() => { this.updateLanguage(currentLanguage) }}>Save</button>
-                                             <button type="button" className="ui button" onClick={this.onClose}>Cancel</button>
+                                                <div className='profile-data-update-btns'>
+                                                    <button type="button" className="profile-data-update-btn" onClick={() => { this.updateLanguage(currentLanguage) }}>Update</button>
+                                                    <button type="button" className="profile-data-cancel-btn" onClick={this.onClose}>Cancel</button>
                                                 </div>
                                             </td>
                                         </tr>

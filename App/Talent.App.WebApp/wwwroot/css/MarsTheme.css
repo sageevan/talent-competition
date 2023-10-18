@@ -27,14 +27,31 @@
 }
 .profile-data-name-update {
     float: left;
-    width: 60%;
+    width: 80%;
 }
 .profile-data-level-update {
     float: left;
-    width: 60%;
+    width: 80%;
+}
+.profile-data-update-btns {
+    float: left;
+
 }
 .profile-data-update-btn {
-    float: left;
+    height:30px;
+    width:80px;
+    margin-right: 10px;
+    color: #33BEFF;
+    border-color: #33BEFF;
+    border-radius:5px;
+}
+.profile-data-cancel-btn {
+    height: 30px;
+    width: 80px;
+    margin-right: 10px;
+    color: red;
+    border-color: red;
+    border-radius: 5px;
 }
 
 .profile-data-delete-body {

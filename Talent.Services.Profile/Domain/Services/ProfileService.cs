@@ -241,11 +241,11 @@ namespace Talent.Services.Profile.Domain.Services
                     Description = profile.Description,
                     LinkedAccounts = profile.LinkedAccounts,
                     JobSeekingStatus = profile.JobSeekingStatus,
-                    //Languages = languages,
+                    Languages = languages,
                     Skills = skills,
                     Education = education,
                     Certifications = certifications,
-                    //Experience = experience,
+                   // Experience = experience,
                 };
                 return result;
             }
