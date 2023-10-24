@@ -5,14 +5,28 @@
 .text.center {
     text-align: center
 }
-.ui table th{
-    width:30%;
-}
+
 .profile-data-table {
     width: 100%;
     margin-top: 10px;
     margin-bottom: 10px;
 }
+.ui table {
+float:left;
+    flex-wrap: wrap;
+
+}
+.ui table th {
+    width:15%;
+
+}
+.ui table tr{
+   
+}
+    .ui table td {
+        word-wrap:anywhere;
+        width: 15%;
+    }
 
 .profile-data-name-input {
     margin-right: 10px;
@@ -54,9 +68,36 @@
     border-radius: 5px;
 }
 
-.profile-data-delete-body {
-    color: red;
+.profile-data-company{
+    width:49%;
+    float:left;
+    margin-right: 10px;
+    margin-bottom:10px;
 }
+
+.profile-data-position {
+    width: 49%;
+    float: left;
+}
+.profile-data-responsibilities {
+    width: 99%;
+    margin-bottom: 10px;
+}
+.profile-data-start {
+    width: 49%;
+    float: left;
+    margin-right: 10px;
+    margin-bottom: 10px;
+}
+
+.profile-data-end {
+    width: 49%;
+    float: left;
+}
+
+        .profile-data-delete-body {
+            color: red;
+        }
     .profile-data-delete-footer {
         margin-bottom: 60px;
     }

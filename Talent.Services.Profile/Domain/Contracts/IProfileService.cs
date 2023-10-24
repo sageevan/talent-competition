@@ -11,13 +11,17 @@ namespace Talent.Services.Profile.Domain.Contracts
 {
     public interface IProfileService
     {
+        Task<bool> AddNewExperience(AddExperienceViewModel experience, String Id);
+        Task<bool> UpdateExperience(AddExperienceViewModel experience, String Id);
+        Task<bool> DeleteExperience(AddExperienceViewModel experience, String Id);
+
         Task<bool> AddNewLanguage(AddLanguageViewModel language, String Id);
         Task<bool> DeleteLanguage(AddLanguageViewModel language, String Id);
         Task<bool> UpdateLanguage(AddLanguageViewModel language, String Id);
 
-        Task<bool> AddNewSkill(AddSkillViewModel language, String Id);
-        Task<bool> DeleteSkill(AddSkillViewModel language, String Id);
-        Task<bool> UpdateSkill(AddSkillViewModel language, String Id);
+        Task<bool> AddNewSkill(AddSkillViewModel skill, String Id);
+        Task<bool> DeleteSkill(AddSkillViewModel skill, String Id);
+        Task<bool> UpdateSkill(AddSkillViewModel skill, String Id);
 
         Task<TalentProfileViewModel> GetTalentProfile(String Id);
         Task<IEnumerable<string>> GetTalentSuggestionIds(string employerOrJobId, bool forJob, int position, int increment);

@@ -45,6 +45,81 @@ namespace Talent.Services.Profile.Domain.Services
             _fileService = fileService;
         }
 
+        public async Task<bool> AddNewExperience(AddExperienceViewModel experience, String userId)
+        {
+            try
+            {
+
+                var newexperience = new UserExperience
+                {
+                    Id = ObjectId.GenerateNewId().ToString(),
+                    Position = experience.Position,
+                    Responsibilities = experience.Responsibilities,
+                    Company = experience.Company,
+                    Start = experience.Start,
+                    End = experience.End,
+                };
+
+                var user = await _userRepository.GetByIdAsync(userId);
+                user.Experience.Add(newexperience);
+                await _userRepository.Update(user);
+                return true;
+            }
+            catch (MongoException e)
+            {
+                return false;
+            }
+        }
+        public async Task<bool> UpdateExperience(AddExperienceViewModel experience, String userId)
+        {
+            try
+            {
+                var updateexperience= new UserExperience
+                {
+                    Id = experience.Id,
+                    Position = experience.Position,
+                    Company=experience.Company,
+                    Responsibilities= experience.Responsibilities,
+                    Start = experience.Start,
+                    End=experience.End,
+                };
+
+                var user = await _userRepository.GetByIdAsync(userId);
+                UserExperience updateExperience = user.Experience.Where(x => x.Id == updateexperience.Id).FirstOrDefault();
+                user.Experience.Remove(updateExperience);
+                user.Experience.Add(updateexperience);
+                await _userRepository.Update(user);
+                return true;
+            }
+            catch (MongoException e)
+            {
+                return false;
+            }
+        }
+
+        public async Task<bool> DeleteExperience(AddExperienceViewModel experience, String userId)
+        {
+            try
+            {
+
+                var deleteExperience = new UserExperience
+                {
+                    Id = experience.Id,
+                };
+
+                var user = await _userRepository.GetByIdAsync(userId);
+                UserExperience deleteexperience = user.Experience.Where(x => x.Id == experience.Id).FirstOrDefault();
+                user.Experience.Remove(deleteexperience);
+                await _userRepository.Update(user);
+                return true;
+            }
+            catch (MongoException e)
+            {
+                return false;
+            }
+        }
+
+
         public async Task<bool> AddNewLanguage(AddLanguageViewModel language , String userId)
         {
             try
@@ -211,10 +286,7 @@ namespace Talent.Services.Profile.Domain.Services
                           : await _fileService.GetFileURL(profile.CvName, FileType.UserCV);
 
                 var skills = profile.Skills.Select(x => ViewModelFromSkill(x)).ToList();
-               // var lan = _userLanguageRepository.
                 var languages = profile.Languages.Select(x => ViewModelFromLanguage(x)).ToList();
-                var education = profile.Education.Select(x => ViewModelFromEducationl(x)).ToList();
-                var certifications = profile.Certifications.Select(x => ViewModelFromCertifications(x)).ToList();
                 var experience = profile.Experience.Select(x => ViewModelFromExperience(x)).ToList();
                 var result = new TalentProfileViewModel
                 {
@@ -243,9 +315,7 @@ namespace Talent.Services.Profile.Domain.Services
                     JobSeekingStatus = profile.JobSeekingStatus,
                     Languages = languages,
                     Skills = skills,
-                    Education = education,
-                    Certifications = certifications,
-                   // Experience = experience,
+                    Experience = experience,
                 };
                 return result;
             }
@@ -598,9 +668,9 @@ namespace Talent.Services.Profile.Domain.Services
             };
         }
 
-        protected AddExperienceViewModel ViewModelFromExperience(UserExperience experience)
+        protected ExperienceViewModel ViewModelFromExperience(UserExperience experience)
         {
-            return new AddExperienceViewModel
+            return new ExperienceViewModel
             {
                 Id = experience.Id,
                 Company = experience.Company,

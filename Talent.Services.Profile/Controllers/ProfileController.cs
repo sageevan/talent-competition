@@ -320,6 +320,72 @@ namespace Talent.Services.Profile.Controllers
             }
         }
 
+
+        [HttpPost("addExperience")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "talent")]
+        public async Task<ActionResult> AddExperience([FromBody] AddExperienceViewModel experience)
+        {
+            try
+            {
+                var user = await _userRepository.GetByIdAsync(_userAppContext.CurrentUserId);
+                if (await _profileService.AddNewExperience(experience, user.Id))
+                {
+                    var updatedProfile = await _userRepository.GetByIdAsync(_userAppContext.CurrentUserId);
+                    var experiences = updatedProfile.Experience;
+                    return Json(new { Experience = experiences });
+                }
+
+            }
+            catch (Exception e)
+            {
+                return Json(new { Success = false, e.Message });
+            }
+            return Json(new { Success = false });
+        }
+        [HttpPost("updateExperience")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "talent")]
+        public async Task<IActionResult> UpdateExperience([FromBody] AddExperienceViewModel experience)
+        {
+            try
+            {
+                var user = await _userRepository.GetByIdAsync(_userAppContext.CurrentUserId);
+                if (await _profileService.UpdateExperience(experience, user.Id))
+                {
+                    var updatedProfile = await _userRepository.GetByIdAsync(_userAppContext.CurrentUserId);
+                    var experiences = updatedProfile.Experience;
+                    return Json(new { Experience = experiences });
+                }
+
+            }
+            catch (Exception e)
+            {
+                return Json(new { Success = false, e.Message });
+            }
+            return Json(new { Success = false });
+        }
+
+        [HttpPost("deleteExperience")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "talent")]
+        public async Task<IActionResult> DeleteExperience([FromBody] AddExperienceViewModel experience)
+        {
+            try
+            {
+                var user = await _userRepository.GetByIdAsync(_userAppContext.CurrentUserId);
+                if (await _profileService.DeleteExperience(experience, user.Id))
+                {
+                    var updatedProfile = await _userRepository.GetByIdAsync(_userAppContext.CurrentUserId);
+                    var experiences = updatedProfile.Experience;
+                    return Json(new { Experience = experiences });
+                }
+
+            }
+            catch (Exception e)
+            {
+                return Json(new { Success = false, e.Message });
+            }
+            return Json(new { Success = false });
+        }
+
         [HttpGet("getCertification")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "talent")]
         public async Task<IActionResult> getCertification()

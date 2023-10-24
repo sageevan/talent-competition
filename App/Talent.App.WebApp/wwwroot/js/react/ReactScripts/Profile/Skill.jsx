@@ -278,7 +278,7 @@ export default class Skill extends React.Component {
                                 onChange={this.handleChange}
                                 name="level">
                                 <option defaultValue hidden>
-                                    {'Select Level'}
+                                    {'Skill Level'}
                                 </option>
                                 <option>Beginner</option>
                                 <option>Intermediate</option>
@@ -325,7 +325,7 @@ export default class Skill extends React.Component {
                                             inputType="text"
                                             name="name"
                                             defaultValue={currentSkill.skill}
-                                                    onChange={(event) => { currentSkill.skill = event.target.value; }}
+                                            onChange={(event) => { currentSkill.skill = event.target.value; }}
                                             maxLength={20}
                                             placeholder="Add Skill"
                                             errorMessage="Please enter a valid Skill"></input>
