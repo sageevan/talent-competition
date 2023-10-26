@@ -344,6 +344,8 @@ namespace Talent.Services.Profile.Domain.Services
                     existingUser.Address = model.Address;
 
                     existingUser.Nationality = model.Nationality;
+                    existingUser.VisaStatus = model.VisaStatus;
+                    existingUser.VisaExpiryDate = model.VisaExpiryDate;
 
 
                     existingUser.UpdatedBy = updaterId;

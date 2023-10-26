@@ -11,21 +11,17 @@
     margin-top: 10px;
     margin-bottom: 10px;
 }
-.ui table {
-float:left;
-    flex-wrap: wrap;
-
-}
 .ui table th {
-    width:15%;
+    width:10%;
 
-}
-.ui table tr{
-   
 }
     .ui table td {
         word-wrap:anywhere;
-        width: 15%;
+        width: 12%;
+    }
+
+    .ui table label{
+        font-weight:900;
     }
 
 .profile-data-name-input {
@@ -80,6 +76,7 @@ float:left;
     float: left;
 }
 .profile-data-responsibilities {
+    float:left;
     width: 99%;
     margin-bottom: 10px;
 }
@@ -95,9 +92,24 @@ float:left;
     float: left;
 }
 
-        .profile-data-delete-body {
-            color: red;
-        }
+.profile-data-visa-status {
+    width: 30%;
+    float: left;
+    margin-right:20px;
+}
+
+.profile-data-visa-expiry {
+    width: 30%;
+    float: left;
+}
+.profile-data-visa-save {
+    width: 30%;
+    float: left;
+}
+
+    .profile-data-delete-body {
+        color: red;
+    }
     .profile-data-delete-footer {
         margin-bottom: 60px;
     }

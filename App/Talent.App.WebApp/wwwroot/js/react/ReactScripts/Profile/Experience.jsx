@@ -17,7 +17,7 @@ export default class Experience extends React.Component {
                 id:"",
                 company: "",
                 position: "",
-                responsibility: "",
+                responsibilities: "",
                 start: "",
                 end:""
             }
@@ -30,7 +30,7 @@ export default class Experience extends React.Component {
             newExperience: experiencedata,
             experienceData: experiencedata,
             deleteConfirm: false,
-            currentExperience: {}
+            currentExperience: experiencedata
         }
         this.handleChange = this.handleChange.bind(this)
         this.renderDisplay = this.renderDisplay.bind(this)
@@ -42,7 +42,8 @@ export default class Experience extends React.Component {
         this.deleteExperience = this.deleteExperience.bind(this)
         this.onClose = this.onClose.bind(this)
         this.selectExperienceForUpdate = this.selectExperienceForUpdate.bind(this)
-        this.deleteConfirm = this.deleteConfirm.bind(this)
+     this.deleteConfirm = this.deleteConfirm.bind(this)
+     this.formattedDate = this.formattedDate.bind(this)
   
     }
     init() {
@@ -76,23 +77,28 @@ export default class Experience extends React.Component {
             //    <button type="button" className="ui teal button" onClick={this.saveExperience}>Save</button>
             //</div>
             this.renderDisplay(this.state.experienceData, this.state.editExperienceId, this.state.addNew, this.state.deleteConfirm, this.state.currentExperience)
+            
         )
     }
 
     saveExperience() {
-        //this.loadData();
         const experience = {
             'company': this.state.newExperience.company,
-            'responsibilities': this.state.newExperience.responsibility,
+            'responsibilities': this.state.newExperience.responsibilities,
             'position': this.state.newExperience.position,
             'start': this.state.newExperience.start,
             'end': this.state.newExperience.end
+        } 
+        console.log(experience)
+        if (experience.company == null || experience.company == "" ||
+            experience.responsibilities == null || experience.responsibilities == "" ||
+            experience.position == null || experience.position == "" ||
+            experience.start == null || experience.start == "" ||
+            experience.end == null || experience.end == "") {
+            TalentUtil.notification.show("Enter Expeirence details before create!", "error", null, null)
         }
-        //if (language.name == null || language.level == null || language.name == '' || language.level == '') {
-        //    TalentUtil.notification.show("Enter Language details before save!", "error", null, null)
-        //}
-        //else {
-            
+        else {
+        
         const data = Object.assign({}, experience)
             console.log(data)
             var cookies = Cookies.get('talentAuthToken');
@@ -130,7 +136,7 @@ export default class Experience extends React.Component {
             })
 
             this.onClose()
-      //  }
+        }
     }
     loadData() {
         var cookies = Cookies.get('talentAuthToken');
@@ -160,7 +166,6 @@ export default class Experience extends React.Component {
     }
 
     selectExperienceForUpdate(experience) {
-        console.log(experience)
         this.setState({
             editExperienceId: experience.id,
             currentExperience: experience,
@@ -171,13 +176,21 @@ export default class Experience extends React.Component {
         const experience = {
             'id': this.state.editExperienceId,
             'company': updateExperience.company,
-            'responsibilities': updateExperience.responsibility,
+            'responsibilities': updateExperience.responsibilities,
             'position': updateExperience.position,
             'start': updateExperience.start,
             'end': updateExperience.end
         }
-          //  const language = { 'id': this.state.editLanguageId, 'name': currentLanguage.language, 'level': currentLanguage.languageLevel }
-        const data = Object.assign({}, experience)
+        if (experience.company == null || experience.company == "" ||
+            experience.responsibilities == null || experience.responsibilities == "" ||
+            experience.position == null || experience.position == "" ||
+            experience.start == null || experience.start == "" ||
+            experience.end == null || experience.end == "") {
+            TalentUtil.notification.show("Enter Expeirence details before update!", "error", null, null)
+        }
+        else {
+            //  const language = { 'id': this.state.editLanguageId, 'name': currentLanguage.language, 'level': currentLanguage.languageLevel }
+            const data = Object.assign({}, experience)
             console.log(data)
             var cookies = Cookies.get('talentAuthToken');
             $.ajax({
@@ -212,6 +225,7 @@ export default class Experience extends React.Component {
                 }
             })
             this.onClose()
+        }
     }
 
 
@@ -219,7 +233,7 @@ export default class Experience extends React.Component {
         const experience = {
             'id': this.state.currentExperience.id,
             'company': this.state.currentExperience.company,
-            'responsibilities': this.state.currentExperience.responsibility,
+            'responsibilities': this.state.currentExperience.responsibilities,
             'position': this.state.currentExperience.position,
             'start': this.state.currentExperience.start,
             'end': this.state.currentExperience.end
@@ -291,11 +305,19 @@ export default class Experience extends React.Component {
         this.loadData();
     }
 
+    formattedDate(_date) {
+    let date = _date.getDate();
+    let month = _date.getMonth() + 1;
+    let year = _date.getFullYear();
+    let formattedDate = `${year}${'-'}${month < 10 ? `0${month}` : `${month}`}${'-'}${date < 10 ? `0${date}` : `${date}`}`;
+    return formattedDate;
+}
+
 
     renderDisplay(experiences, editId, addNew, deleteConfirm, currentExperience) {
         return (
-
-            <div className='profile-data-table'>
+   
+            <div className='ui sixteen wide column'>
                 {addNew &&
 
                     <div>
@@ -340,7 +362,7 @@ export default class Experience extends React.Component {
                         <ChildSingleInput
                             inputType="text"
                             label="Responsibilities"
-                            name="responsibility"
+                            name="responsibilities"
                             controlFunc={this.handleChange}
                             maxLength={100}
                             placeholder="Enter your responsibility"
@@ -384,11 +406,11 @@ export default class Experience extends React.Component {
                             experiences.map((experience) => (
                                 experience.id == editId ?
                                     <tr key={experience.id}>
-                                            <td>
-                                                <div className='profile-data-company'>
+                                        <td colspan="6">
+                                              <div className='profile-data-company'>
+                                                <label>Company</label>
                                                 <input
                                                     inputType="text"
-                                                    label="Company"
                                                     name="company"
                                                     defaultValue={currentExperience.company}
                                                     onChange={(event) => { currentExperience.company = event.target.value; }}
@@ -396,63 +418,58 @@ export default class Experience extends React.Component {
                                                     errorMessage="Please enter a valid company name">
                                                 </input>
                                             </div>
-                                            </td>
-                                            <td>
-                                                <div className='profile-data-position'>
+                                            <div className='profile-data-position'>
+                                                <label>Position</label>
                                                 <input
                                                     inputType="text"
-                                                    label="Position"
                                                     name="position"
                                                     defaultValue={currentExperience.position}
                                                     onChange={(event) => { currentExperience.position = event.target.value; }}
                                                     maxLength={100}
                                                     errorMessage="Please enter a valid position">
                                                 </input>
-                                                </div>
-                                        </td>
-                                        <td>
-                                            <div className='profile-data-responsibilities'>
-                                                <input
-                                                    inputType="text"
-                                                    label="Responsibilities"
-                                                    name="responsibility"
-                                                    defaultValue={currentExperience.responsibilities}
-                                                    onChange={(event) => { currentExperience.responsibility = event.target.value; }}
-                                                    maxLength={100}
-                                                    errorMessage="Please enter a responsibility">
-                                                </input>
                                             </div>
-                                        </td>
-                                        <td>
+
                                             <div className='profile-data-start'>
                                                 <label>Start Date</label>
                                                 <input type="date"
                                                     name="start"
-                                                    defaultValue={currentExperience.start}
+                                                    defaultValue={this.formattedDate(new Date(currentExperience.start))}
                                                     onChange={(event) => { currentExperience.start = event.target.value; }}
                                                     >
                                                 </input>
                                             </div>
-                                        </td>
-                                        <td>
+
                                             <div className='profile-data-end'>
                                                 <label>End Date</label>
                                                 <input type="date"
                                                     name="end"
-                                                    defaultValue={currentExperience.end}
+                                                    defaultValue={this.formattedDate(new Date(currentExperience.end))}
                                                     onChange={(event) => { currentExperience.end = event.target.value; }}
                                                 >
                                                 </input>
                                             </div>
-                                        </td>
-                                            <td>
+    
+
+                                            <div className='profile-data-responsibilities'>
+                                                <label>Responsibilities</label>
+                                                <input
+                                                    inputType="text"
+                                                    name="responsibility"
+                                                    defaultValue={currentExperience.responsibilities}
+                                                    onChange={(event) => { currentExperience.responsibilities = event.target.value; }}
+                                                    maxLength={100}
+                                                    errorMessage="Please enter a responsibility">
+                                                </input>
+                                            </div>
+
                                                 <div className='profile-data-update-btns'>
                                                     <button type="button" className="profile-data-update-btn" onClick={() => { this.updateExperience(currentExperience) }}>Update</button>
                                                     <button type="button" className="profile-data-cancel-btn" onClick={this.onClose}>Cancel</button>
-                                                </div>
+                                            </div>
                                             </td>
-                                        </tr>
-                                        :
+                                      </tr>
+                                         :
                                     <tr key={experience.id}>
                                         <td>{experience.company}</td>
                                         <td>{experience.position}</td>

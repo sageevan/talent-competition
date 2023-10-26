@@ -145,7 +145,6 @@ export default class Skill extends React.Component {
     }
 
     selectSkillForUpdate(skill) {
-        //console.log(skill)
         this.setState({
             editSkillId: skill.id,
             currentSkill : skill

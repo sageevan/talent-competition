@@ -10,7 +10,7 @@ export default class Education extends React.Component {
 
     render() {
         return (
-            <h1>Sha</h1>
+            <h6>Not Implemented</h6>
         )
     }
 }
