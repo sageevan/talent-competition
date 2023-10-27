@@ -61,6 +61,7 @@ namespace Talent.Common.Models
             Address = new Address();
             Videos = new List<TalentVideo>();
             LinkedAccounts = new LinkedAccounts();
+            JobSeekingStatus = new JobSeekingStatus();
         }
     }
 

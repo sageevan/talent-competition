@@ -39,8 +39,8 @@ export default class AccountProfile extends React.Component {
                     github: ""
                 },
                 jobSeekingStatus: {
-                    status: "",
-                    availableDate: null
+                    status: ""
+                   // availableDate: null
                 }
             },
             loaderData: loaderData,
@@ -111,8 +111,7 @@ export default class AccountProfile extends React.Component {
     }
 
     saveProfile() {
-      //  console.log(this.state.profileData.languages);
-      //  console.log(this.state.profileData);
+        //console.log(this.state.profileData.jobSeekingStatus)
         var cookies = Cookies.get('talentAuthToken');
         $.ajax({
             url: 'http://localhost:60290/profile/profile/updateTalentProfile',

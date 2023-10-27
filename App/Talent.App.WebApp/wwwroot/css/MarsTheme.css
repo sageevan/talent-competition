@@ -106,10 +106,20 @@
     width: 30%;
     float: left;
 }
+.profile-data-current-status {
+    float: left;
+}
+.profile-data-current-status label{
+    font-weight:bold;
+    font-size:16px;
+}
+.profile-data-current-status div{
+    margin-top:3px;
+}
 
-    .profile-data-delete-body {
-        color: red;
-    }
+.profile-data-delete-body {
+    color: red;
+}
     .profile-data-delete-footer {
         margin-bottom: 60px;
     }

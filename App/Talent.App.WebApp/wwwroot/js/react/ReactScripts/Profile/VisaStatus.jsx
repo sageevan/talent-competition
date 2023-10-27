@@ -23,7 +23,7 @@ export default class VisaStatus extends React.Component {
     handleChange(event) {
         console.log(event.target.name + event.target.value)
 
-        const data = Object.assign({}, this.state.newNationality)
+        const data = Object.assign({}, this.state.visaStatus)
         data[event.target.name] = event.target.value
         this.setState({
             visaStatus: data
@@ -32,8 +32,16 @@ export default class VisaStatus extends React.Component {
         this.props.saveProfileData(data)
     }
 
-    saveVisaStatus() {
-
+    saveVisaStatus(visaexpirydate) {
+        if (visaexpirydate == null || visaexpirydate == "") {
+            TalentUtil.notification.show("Please enter Expiry date before save!", "error", null, null)
+        } else { 
+        const visaStatusData = {
+            visaExpiryDate: visaexpirydate
+        }
+        console.log(visaStatusData)
+        this.props.saveProfileData(visaStatusData)
+    }
     }
     formatDate(_date) {
         let date = _date.getDate();
@@ -45,12 +53,12 @@ export default class VisaStatus extends React.Component {
 
     render() {
         return (
-            this.renderDisplay(this.props.visaStatus)
+            this.renderDisplay(this.props.visaStatus, this.state.visaExpiryDate)
         )
     }
 
 
-    renderDisplay(visaStatus) {
+    renderDisplay(visaStatus, visaExpiryDate) {
         return (
             <div className='ui sixteen wide column'>
                 {
@@ -72,8 +80,8 @@ export default class VisaStatus extends React.Component {
                                 <input
                                     type="date"
                                     className="input"
-                                    onChange={this.handleChange}
-                                    value={this.formatDate(new Date(this.props.visaExpiryDate)) }
+                                    onChange={(event) => { visaExpiryDate = event.target.value; }}
+                                    defaultValue={this.formatDate(new Date(this.props.visaExpiryDate)) }
                                     name="visaExpiryDate">
                                 </input>
                             </div >
@@ -81,7 +89,7 @@ export default class VisaStatus extends React.Component {
                                 <button
                                     type="button"
                                     className="ui right floated teal button"
-                                    onClick={this.saveVisaStatus} > Save
+                                    onClick={() => { this.saveVisaStatus(visaExpiryDate) }} > Save
                                 </button>
                             </div >
                         </div>

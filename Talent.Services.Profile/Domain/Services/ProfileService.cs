@@ -332,13 +332,11 @@ namespace Talent.Services.Profile.Domain.Services
                 {
 
                     User existingUser = (await _userRepository.GetByIdAsync(model.Id));
-
-                    //existingUser.Languages.Add(model.Languages.Select(x => UpdateModelForLanguage(x)).ToList().FirstOrDefault());
                     existingUser.FirstName = model.FirstName;
                     existingUser.LastName = model.LastName;
                     existingUser.Email = model.Email;
                     existingUser.Phone = model.Phone;
-
+                    existingUser.JobSeekingStatus =model.JobSeekingStatus;
                     existingUser.LinkedAccounts= model.LinkedAccounts;
 
                     existingUser.Address = model.Address;
