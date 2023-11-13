@@ -4,6 +4,7 @@ import SocialMediaLinkedAccount from './SocialMediaLinkedAccount.jsx';
 import { IndividualDetailSection } from './ContactDetail.jsx';
 import FormItemWrapper from '../Form/FormItemWrapper.jsx';
 import { Address, Nationality } from './Location.jsx';
+import Description from './Description.jsx';
 import Language from './Language.jsx';
 import Skill from './Skill.jsx';
 import Education from './Education.jsx';
@@ -25,6 +26,8 @@ export default class AccountProfile extends React.Component {
         this.state = {
             profileData: {
                 address: {},
+                description: '',
+                summary:'',
                 nationality: '',
                 education: [],
                 languages: [],
@@ -39,8 +42,8 @@ export default class AccountProfile extends React.Component {
                     github: ""
                 },
                 jobSeekingStatus: {
-                    status: ""
-                   // availableDate: null
+                    status: "",
+                    availableDate: ""
                 }
             },
             loaderData: loaderData,
@@ -99,8 +102,8 @@ export default class AccountProfile extends React.Component {
 
     //updates component's state and saves data
     updateAndSaveData(newValues) {
-        
         let newProfile = Object.assign({}, this.state.profileData, newValues)
+        console.log(newProfile)
         this.setState({
             profileData: newProfile
         }, this.saveProfile)
@@ -111,7 +114,7 @@ export default class AccountProfile extends React.Component {
     }
 
     saveProfile() {
-        //console.log(this.state.profileData.jobSeekingStatus)
+        console.log(this.state.profileData)
         var cookies = Cookies.get('talentAuthToken');
         $.ajax({
             url: 'http://localhost:60290/profile/profile/updateTalentProfile',
@@ -162,6 +165,17 @@ export default class AccountProfile extends React.Component {
                                                 linkedAccounts={this.state.profileData.linkedAccounts}
                                                 updateProfileData={this.updateWithoutSave}
                                                 saveProfileData={this.updateForComponentId}
+                                            />
+                                        </FormItemWrapper>
+                                        <FormItemWrapper
+                                            title='Description'
+                                            tooltip = ''
+                                        >
+                                            <Description
+                                                description={this.state.profileData.description}
+                                                summary={this.state.profileData.summary}
+                                                updateProfileData={this.updateWithoutSave}
+                                                saveProfileData={this.updateAndSaveData}
                                             />
                                         </FormItemWrapper>
                                         <FormItemWrapper

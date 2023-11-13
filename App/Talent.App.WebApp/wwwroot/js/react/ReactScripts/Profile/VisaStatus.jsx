@@ -21,14 +21,11 @@ export default class VisaStatus extends React.Component {
     }
 
     handleChange(event) {
-        console.log(event.target.name + event.target.value)
-
         const data = Object.assign({}, this.state.visaStatus)
         data[event.target.name] = event.target.value
         this.setState({
             visaStatus: data
         })
-        console.log(data)
         this.props.saveProfileData(data)
     }
 
@@ -39,7 +36,6 @@ export default class VisaStatus extends React.Component {
         const visaStatusData = {
             visaExpiryDate: visaexpirydate
         }
-        console.log(visaStatusData)
         this.props.saveProfileData(visaStatusData)
     }
     }

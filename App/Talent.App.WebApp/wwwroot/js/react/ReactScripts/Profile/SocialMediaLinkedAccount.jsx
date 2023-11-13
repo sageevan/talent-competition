@@ -31,10 +31,6 @@ export default class SocialMediaLinkedAccount extends React.Component {
         this.renderDisplay = this.renderDisplay.bind(this)
     }
 
-    componentDidMount() {
-      //  $('.ui.button.social-media')
-       //     .popup();
-    }
     openEdit() {
         this.setState({
             showEditSection: true,
@@ -57,7 +53,6 @@ export default class SocialMediaLinkedAccount extends React.Component {
 
     saveLinks() {
         const data = Object.assign(this.props.linkedAccounts, this.state.newLinks)
-        console.log(data)
         if (!validator.isURL(data.linkedIn) || !validator.isURL(data.github)) {
             TalentUtil.notification.show("Enter valid URLs before save!", "error", null, null)
         } else {

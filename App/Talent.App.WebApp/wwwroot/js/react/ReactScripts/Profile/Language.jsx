@@ -72,16 +72,13 @@ export default class Language extends React.Component {
     }
 
     saveLanguage() {
-        //this.loadData();
         const language = { 'name': this.state.newLanguage.name, 'level': this.state.newLanguage.level }
-        console.log(language)
         if (language.name == null || language.level == null || language.name == '' || language.level == '') {
             TalentUtil.notification.show("Enter Language details before save!", "error", null, null)
         }
         else {
             
             const data = Object.assign({}, language)
-            console.log(data)
             var cookies = Cookies.get('talentAuthToken');
             $.ajax({
                 url: 'http://localhost:60290/profile/profile/addLanguage',
@@ -104,7 +101,6 @@ export default class Language extends React.Component {
                         TalentUtil.notification.show("Language added sucessfully", "success", null, null)
 
                     } else {
-                        console.log(res.state);
                         TalentUtil.notification.show("Language did not add successfully", "error", null, null)
                     }
 
@@ -134,7 +130,6 @@ export default class Language extends React.Component {
                 let languagedata = null;
                 if (res) {
                     languagedata = res.languages
-                    console.log("profileData", res.languages)
                 }
                 console.log(res.languages)
                 this.setState({
@@ -150,7 +145,6 @@ export default class Language extends React.Component {
     }
 
     selectLanguageForUpdate(language) {
-       // console.log(language)
         this.setState({
             editLanguageId: language.id,
             currentLanguage : language,
@@ -164,7 +158,6 @@ export default class Language extends React.Component {
         else {
             const language = { 'id': this.state.editLanguageId, 'name': currentLanguage.language, 'level': currentLanguage.languageLevel }
             const data = Object.assign({}, language)
-            console.log(data)
             var cookies = Cookies.get('talentAuthToken');
             $.ajax({
                 url: 'http://localhost:60290/profile/profile/updateLanguage',
@@ -186,7 +179,6 @@ export default class Language extends React.Component {
                         TalentUtil.notification.show("Language updated sucessfully", "success", null, null)
 
                     } else {
-                        console.log(res.state);
                         TalentUtil.notification.show("Language did not update successfully", "error", null, null)
                     }
 
@@ -224,7 +216,6 @@ export default class Language extends React.Component {
                     })
                     TalentUtil.notification.show("Language deleted sucessfully", "success", null, null)
                 } else {
-                    console.log(res.state);
                     TalentUtil.notification.show("Language did not delete successfully", "error", null, null)
                 }
 
@@ -240,7 +231,6 @@ export default class Language extends React.Component {
 
     }
     deleteConfirm(data) {
-        console.log(data)
         this.setState({
             deleteConfirm: true,
             currentLanguage: data,
@@ -301,8 +291,8 @@ export default class Language extends React.Component {
 
                     <div>
                       
-                        <div class="profile-data-delete-body">
-                            <h4 class="language-delete-title">Language Delete Confirmation</h4>
+                        <div className="profile-data-delete-body">
+                            <h4 className="language-delete-title">Language Delete Confirmation</h4>
                                         Are you Sure!!! You want to delete this Language?
                                     </div>
                         <div class="profile-data-delete-footer">
@@ -311,7 +301,7 @@ export default class Language extends React.Component {
                                     </div>
                                 </div>
                 }
-                    <table class="ui table">
+                    <table className="ui table">
                         <thead>
                             <tr>
                             <th>Language</th>
@@ -327,13 +317,12 @@ export default class Language extends React.Component {
                                             <td>
                                                 <div className='profile-data-name-update'>
                                             <input
-                                                inputType="text"
+                                                inputtype="text"
                                                 name="name"
                                                         defaultValue={currentLanguage.language}
                                                         onChange={(event) => { currentLanguage.language = event.target.value; }}
                                                 maxLength={20}
-                                                placeholder="Add Language"
-                                                errorMessage="Please enter a valid Language"></input>
+                                                placeholder="Add Language"></input>
                                             </div>
                                             </td>
                                             <td>

@@ -76,7 +76,6 @@ export default class Skill extends React.Component {
         }
         else {
             const data = Object.assign({}, skill)
-            console.log(data)
             var cookies = Cookies.get('talentAuthToken');
             $.ajax({
                 url: 'http://localhost:60290/profile/profile/addSkill',
@@ -129,9 +128,7 @@ export default class Skill extends React.Component {
                 let skilldata = null;
                 if (res) {
                     skilldata = res.skills
-                    console.log("profileData", res.skills)
                 }
-                console.log(res.skills)
                 this.setState({
                     skillData: skilldata
                 })
@@ -180,7 +177,6 @@ export default class Skill extends React.Component {
                         TalentUtil.notification.show("Skill updated sucessfully", "success", null, null)
 
                     } else {
-                        console.log(res.state);
                         TalentUtil.notification.show("Skill did not update successfully", "error", null, null)
                     }
 
@@ -219,7 +215,6 @@ export default class Skill extends React.Component {
                     })
                     TalentUtil.notification.show("Skill deleted sucessfully", "success", null, null)
                 } else {
-                    console.log(res.state);
                     TalentUtil.notification.show("Skill did not delete successfully", "error", null, null)
                 }
 
@@ -235,7 +230,6 @@ export default class Skill extends React.Component {
 
     }
     deleteConfirm(data) {
-        console.log(data)
         this.setState({
             deleteConfirm: true,
             currentSkill: data,
@@ -295,17 +289,17 @@ export default class Skill extends React.Component {
 
                     <div>
 
-                        <div class="profile-data-delete-body">
-                            <h4 class="delete-title">Skill Delete Confirmation</h4>
+                        <div className="profile-data-delete-body">
+                            <h4 className="delete-title">Skill Delete Confirmation</h4>
                             Are you Sure!!! You want to delete this Skill?
                         </div>
-                        <div class="profile-data-delete-footer">
+                        <div className="profile-data-delete-footer">
                             <button type="button" className="ui right floated teal button" onClick={this.deleteSkill}>Yes</button>
                             <button type="button" className="ui right floated teal button" onClick={this.onClose}>No</button>
                         </div>
                     </div>
                 }
-                <table class="ui table">
+                <table className="ui table">
                     <thead>
                         <tr>
                             <th>Skill</th>
@@ -321,13 +315,12 @@ export default class Skill extends React.Component {
                                         <td>
                                             <div className='profile-data-name-update'>
                                         <input
-                                            inputType="text"
+                                            inputtype="text"
                                             name="name"
                                             defaultValue={currentSkill.skill}
                                             onChange={(event) => { currentSkill.skill = event.target.value; }}
                                             maxLength={20}
-                                            placeholder="Add Skill"
-                                            errorMessage="Please enter a valid Skill"></input>
+                                            placeholder="Add Skill"></input>
                                             </div>
                                         </td>
                                         <td>

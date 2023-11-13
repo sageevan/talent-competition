@@ -276,8 +276,12 @@ namespace Talent.Services.Profile.Domain.Services
 
             var videoUrl = "";
             var cvUrl = "";
+            var photoUrl = "";
             if (profile != null)
             {
+                //photoUrl = string.IsNullOrWhiteSpace(profile.ProfilePhoto)
+                //          ? ""
+                //          : await _fileService.GetFileURL(profile.ProfilePhoto, FileType.ProfilePhoto);
                 videoUrl = string.IsNullOrWhiteSpace(profile.VideoName)
                           ? ""
                           : await _fileService.GetFileURL(profile.VideoName, FileType.UserVideo);
@@ -326,6 +330,9 @@ namespace Talent.Services.Profile.Domain.Services
 
         public async Task<bool> UpdateTalentProfile(TalentProfileViewModel model, string updaterId)
         {
+            var status = new JobSeekingStatus();
+            status.Status = model.JobSeekingStatus.Status;
+            status.AvailableDate = null;
             try
             {
                 if (model.Id != null)
@@ -336,19 +343,23 @@ namespace Talent.Services.Profile.Domain.Services
                     existingUser.LastName = model.LastName;
                     existingUser.Email = model.Email;
                     existingUser.Phone = model.Phone;
-                    existingUser.JobSeekingStatus =model.JobSeekingStatus;
+                    existingUser.JobSeekingStatus = status;
                     existingUser.LinkedAccounts= model.LinkedAccounts;
 
                     existingUser.Address = model.Address;
+                    existingUser.Description = model.Description;
+                    existingUser.Summary = model.Summary;
 
                     existingUser.Nationality = model.Nationality;
                     existingUser.VisaStatus = model.VisaStatus;
                     existingUser.VisaExpiryDate = model.VisaExpiryDate;
 
-
                     existingUser.UpdatedBy = updaterId;
                     existingUser.UpdatedOn = DateTime.Now;
-   
+
+                    
+
+
 
                     await _userRepository.Update(existingUser);
                     return true;
@@ -528,11 +539,49 @@ namespace Talent.Services.Profile.Domain.Services
 
         public async Task<bool> UpdateTalentPhoto(string talentId, IFormFile file)
         {
-            //Your code here;
-            throw new NotImplementedException();
+            var fileExtension = Path.GetExtension(file.FileName);
+            List<string> acceptedExtensions = new List<string> { ".jpg", ".png", ".gif", ".jpeg" };
+            //Console.WriteLine(fileExtension + " " + file.FileName);
+            if (fileExtension != null && !acceptedExtensions.Contains(fileExtension.ToLower()))
+            {
+                return false;
+            }
+
+            var profile = (await _userRepository.Get(x => x.Id == talentId)).SingleOrDefault();
+
+            if (profile == null)
+            {
+                return false;
+            }
+            //Console.WriteLine(file.FileName);
+            //Console.WriteLine(FileType.ProfilePhoto);
+            var newFileName = await _fileService.SaveFile(file, FileType.ProfilePhoto);
+            //Console.WriteLine(newFileName);
+
+            if (!string.IsNullOrWhiteSpace(newFileName))
+            {
+                var oldFileName = profile.ProfilePhoto;
+                Console.WriteLine(oldFileName);
+                if (!string.IsNullOrWhiteSpace(oldFileName))
+                {
+                    await _fileService.DeleteFile(oldFileName, FileType.ProfilePhoto);
+                }
+
+                //profile.ProfilePhoto = null;
+                profile.ProfilePhotoUrl = await _fileService.GetFileURL(newFileName, FileType.ProfilePhoto);
+            profile.ProfilePhoto = newFileName;
+                // profile.ProfilePhotoUrl = null;
+                Console.WriteLine(profile.ProfilePhotoUrl);
+                await _userRepository.Update(profile);
+                return true;
+            }
+
+            return false
+                ;
+
         }
 
-        public async Task<bool> AddTalentVideo(string talentId, IFormFile file)
+            public async Task<bool> AddTalentVideo(string talentId, IFormFile file)
         {
             //Your code here;
             throw new NotImplementedException();

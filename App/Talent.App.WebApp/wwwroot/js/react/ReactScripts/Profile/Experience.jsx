@@ -38,12 +38,12 @@ export default class Experience extends React.Component {
         this.saveExperience = this.saveExperience.bind(this)
         this.init = this.init.bind(this)
         this.loadData = this.loadData.bind(this)
-     this.updateExperience = this.updateExperience.bind(this)
+        this.updateExperience = this.updateExperience.bind(this)
         this.deleteExperience = this.deleteExperience.bind(this)
         this.onClose = this.onClose.bind(this)
         this.selectExperienceForUpdate = this.selectExperienceForUpdate.bind(this)
-     this.deleteConfirm = this.deleteConfirm.bind(this)
-     this.formattedDate = this.formattedDate.bind(this)
+        this.deleteConfirm = this.deleteConfirm.bind(this)
+        this.formattedDate = this.formattedDate.bind(this)
   
     }
     init() {
@@ -72,10 +72,6 @@ export default class Experience extends React.Component {
     }
     render() {
         return (
-            //<div>
-            //    <label>sha</label>
-            //    <button type="button" className="ui teal button" onClick={this.saveExperience}>Save</button>
-            //</div>
             this.renderDisplay(this.state.experienceData, this.state.editExperienceId, this.state.addNew, this.state.deleteConfirm, this.state.currentExperience)
             
         )
@@ -89,7 +85,6 @@ export default class Experience extends React.Component {
             'start': this.state.newExperience.start,
             'end': this.state.newExperience.end
         } 
-        console.log(experience)
         if (experience.company == null || experience.company == "" ||
             experience.responsibilities == null || experience.responsibilities == "" ||
             experience.position == null || experience.position == "" ||
@@ -100,7 +95,6 @@ export default class Experience extends React.Component {
         else {
         
         const data = Object.assign({}, experience)
-            console.log(data)
             var cookies = Cookies.get('talentAuthToken');
             $.ajax({
                 url: 'http://localhost:60290/profile/profile/addExperience',
@@ -380,17 +374,17 @@ export default class Experience extends React.Component {
 
                     <div>
                       
-                        <div class="profile-data-delete-body">
-                            <h4 class="language-delete-title">Experience Delete Confirmation</h4>
+                        <div className="profile-data-delete-body">
+                            <h4 className="language-delete-title">Experience Delete Confirmation</h4>
                                         Are you Sure!!! You want to delete this Experience?
                                     </div>
-                        <div class="profile-data-delete-footer">
+                        <div className="profile-data-delete-footer">
                             <button type="button" className="ui right floated teal button" onClick={this.deleteExperience}>Yes</button>
                             <button type="button" className="ui right floated teal button" onClick={this.onClose}>No</button>
                                     </div>
                                 </div>
                 }
-                    <table class="ui table">
+                <table className="ui table">
                         <thead>
                             <tr>
                             <th>Company</th>
@@ -406,27 +400,25 @@ export default class Experience extends React.Component {
                             experiences.map((experience) => (
                                 experience.id == editId ?
                                     <tr key={experience.id}>
-                                        <td colspan="6">
+                                        <td colSpan="6">
                                               <div className='profile-data-company'>
                                                 <label>Company</label>
                                                 <input
-                                                    inputType="text"
+                                                    inputtype="text"
                                                     name="company"
                                                     defaultValue={currentExperience.company}
                                                     onChange={(event) => { currentExperience.company = event.target.value; }}
-                                                    maxLength={80}
-                                                    errorMessage="Please enter a valid company name">
+                                                    maxLength={80}>
                                                 </input>
                                             </div>
                                             <div className='profile-data-position'>
                                                 <label>Position</label>
                                                 <input
-                                                    inputType="text"
+                                                    inputtype="text"
                                                     name="position"
                                                     defaultValue={currentExperience.position}
                                                     onChange={(event) => { currentExperience.position = event.target.value; }}
-                                                    maxLength={100}
-                                                    errorMessage="Please enter a valid position">
+                                                    maxLength={100}>
                                                 </input>
                                             </div>
 
@@ -454,12 +446,11 @@ export default class Experience extends React.Component {
                                             <div className='profile-data-responsibilities'>
                                                 <label>Responsibilities</label>
                                                 <input
-                                                    inputType="text"
+                                                    inputtype="text"
                                                     name="responsibility"
                                                     defaultValue={currentExperience.responsibilities}
                                                     onChange={(event) => { currentExperience.responsibilities = event.target.value; }}
-                                                    maxLength={100}
-                                                    errorMessage="Please enter a responsibility">
+                                                    maxLength={100}>
                                                 </input>
                                             </div>
 

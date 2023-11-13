@@ -33,10 +33,6 @@ export class Address extends React.Component {
         this.renderDisplay = this.renderDisplay.bind(this)
     }
 
-    componentDidMount() {
-        //  $('.ui.button.social-media')
-        //     .popup();
-    }
     openEdit() {
         this.setState({
             showEditSection: true,
@@ -72,13 +68,12 @@ export class Address extends React.Component {
         )
     }
     renderEdit() {
-        console.log(Countries)
         let countriesOptions = [];        
         let popCities = [];
         const selectedCountry = this.state.newAddress.country;
         const selectedCity = this.state.newAddress.city;
         const selectedCountryOption = Countries[selectedCountry];
-        console.log(selectedCountryOption)
+        //console.log(selectedCountryOption)
         countriesOptions = Object.keys(Countries).map((x) => <option key={x} value={x}>{x}</option>);
         popCities = selectedCountryOption ? selectedCountryOption.map((x) => <option key={x} value={x}> {x}</option>):"";
         return (
@@ -211,14 +206,14 @@ export class Nationality extends React.Component {
     }
 
     handleChange(event) {
-        console.log(event.target.name + event.target.value)
+        //console.log(event.target.name + event.target.value)
         
         const data = Object.assign({}, this.state.newNationality)
         data[event.target.name] = event.target.value
         this.setState({
           newNationality: data
         })
-        console.log(data)
+        //console.log(data)
         this.props.saveProfileData(data)
     }
 

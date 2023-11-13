@@ -422,18 +422,77 @@ namespace Talent.Services.Profile.Controllers
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public ActionResult getProfileImage(string Id)
         {
-            var profileUrl = _documentService.GetFileURL(Id, FileType.ProfilePhoto);
-            //Please do logic for no image available - maybe placeholder would be fine
-            return Json(new { profilePath = profileUrl });
+            try
+            {
+                var profileUrl = _documentService.GetFileURL(Id, FileType.ProfilePhoto);
+                //Please do logic for no image available - maybe placeholder would be fine
+
+                if (profileUrl != null)
+                {
+                    return Json(new {success = true ,  profilePath = profileUrl });
+                }
+                else
+                {
+                    return Json(new { Success = false });
+                }
+
+            }
+            catch (Exception e)
+            {
+                return Json(new { Success = false, Message = e.Message });
+            }
+
         }
+
 
         [HttpPost("updateProfilePhoto")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "talent")]
         public async Task<ActionResult> UpdateProfilePhoto()
         {
-            //Your code here;
-            throw new NotImplementedException();
+            try
+            {
+                IFormFile file = Request.Form.Files[0];
+                //var user = await _userRepository.GetByIdAsync(_userAppContext.CurrentUserId);
+                if (await _profileService.UpdateTalentPhoto(_userAppContext.CurrentUserId, file))
+                {
+                    var updatedProfile = await _userRepository.GetByIdAsync(_userAppContext.CurrentUserId);
+                    var profileUrl = updatedProfile.ProfilePhotoUrl;
+                    return Json(new { Success = true, profilePath = profileUrl });
+                }
+
+            }
+            catch (Exception e)
+            {
+                return Json(new { Success = false, e.Message });
+            }
+            return Json(new { Success = false });
         }
+
+        //[HttpPost("updateProfilePhoto")]
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "talent")]
+        //public async Task<ActionResult> UpdateProfilePhoto()
+        //{
+        //    //Your code here;
+        //    try
+        //    {
+        //        IFormFile file = Request.Form.Files[0];
+        //        var userId = _userAppContext.CurrentUserId;
+        //        if (await _profileService.UpdateTalentPhoto(userId, file))
+        //        {
+        //            return Json(new { Success = true });
+        //        }
+        //        else
+        //        {
+        //            return Json(new { Success = false });
+        //        }
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        return Json(new { Success = false, Message = e.Message });
+        //    }
+        //    //throw new NotImplementedException();
+        //}
+
 
         [HttpPost("updateTalentCV")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "talent")]
