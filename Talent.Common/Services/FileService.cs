@@ -5,6 +5,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Amazon.S3.Model;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Hosting.Server;
+using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.AspNetCore.Http;
 using Talent.Common.Aws;
 using Talent.Common.Contracts;
@@ -19,8 +21,8 @@ namespace Talent.Common.Services
         private IFileService _fileService;
 
 
-        public FileService(IHostingEnvironment environment, 
-            IAwsService awsService)
+        public FileService(IHostingEnvironment environment,
+            IAwsService awsService, IServer server)
         {
             _environment = environment;
             _tempFolder = "\\images\\";
@@ -29,8 +31,6 @@ namespace Talent.Common.Services
 
         public async Task<string> GetFileURL(string fileName, FileType type)
         {
-            //Your code here;
-            // throw new NotImplementedException();
 
             string pathWeb = "";
 
@@ -50,7 +50,7 @@ namespace Talent.Common.Services
                 pathValue = pathWeb + _tempFolder;
                 path = pathValue + fileName;
 
-                Console.WriteLine("get url "+ path);
+                Console.WriteLine("get url " + path);
             }
             return path;
 
@@ -58,8 +58,6 @@ namespace Talent.Common.Services
 
         public async Task<string> SaveFile(IFormFile file, FileType type)
         {
-            //Your code here;
-            // unique file name
             var myUniqueFileName = "";
             string pathWeb = "";
             if (string.IsNullOrWhiteSpace(_environment.WebRootPath))
@@ -67,7 +65,6 @@ namespace Talent.Common.Services
                 _environment.WebRootPath = Path.Combine(Directory.GetCurrentDirectory(), "");
             }
             pathWeb = _environment.WebRootPath;
-            //Console.WriteLine(pathWeb);
 
             if (file != null && type == FileType.ProfilePhoto && pathWeb != "")
             {
@@ -78,7 +75,6 @@ namespace Talent.Common.Services
                 {
                     await file.CopyToAsync(fileStream);
                 }
-               // Console.WriteLine(path);
             }
             return myUniqueFileName;
         }
@@ -92,21 +88,12 @@ namespace Talent.Common.Services
                 _environment.WebRootPath = Path.Combine(Directory.GetCurrentDirectory(), "");
             }
             pathWeb = _environment.WebRootPath;
-            //Console.WriteLine(pathWeb);
 
             if (fileName != null && type == FileType.ProfilePhoto && pathWeb != "")
             {
                 string pathValue = pathWeb + _tempFolder;
-                //myUniqueFileName = $@"{DateTime.Now.Ticks}_" + fileName;
                 var path = pathValue + fileName;
-                Console.WriteLine(path);
-                //using (var fileStream = new FileStream(path, FileMode.Truncate))
-                //{
-                File.SetAttributes(path, FileAttributes.Normal);
                 File.Delete(path);
-                    //await file.CopyToAsync(fileStream);
-                //}
-                // Console.WriteLine(path);
             }
             return true;
         }
@@ -119,7 +106,7 @@ namespace Talent.Common.Services
             //Your code here;
             throw new NotImplementedException();
         }
-        
+
         private async Task<bool> DeleteFileGeneral(string id, string bucket)
         {
             //Your code here;

@@ -81,7 +81,7 @@ export default class Language extends React.Component {
             const data = Object.assign({}, language)
             var cookies = Cookies.get('talentAuthToken');
             $.ajax({
-                url: 'http://localhost:60290/profile/profile/addLanguage',
+                url: 'https://talentmvpservicesprofile.azurewebsites.net/profile/profile/addLanguage',
                 headers: {
                     'Authorization': 'Bearer ' + cookies,
                     'Content-Type': 'application/json'
@@ -120,7 +120,7 @@ export default class Language extends React.Component {
     loadData() {
         var cookies = Cookies.get('talentAuthToken');
         $.ajax({
-            url: 'http://localhost:60290/profile/profile/getLanguage',
+            url: 'https://talentmvpservicesprofile.azurewebsites.net/profile/profile/getLanguage',
             headers: {
                 'Authorization': 'Bearer ' + cookies,
                 'Content-Type': 'application/json'
@@ -131,7 +131,7 @@ export default class Language extends React.Component {
                 if (res) {
                     languagedata = res.languages
                 }
-                console.log(res.languages)
+                //console.log(res.languages)
                 this.setState({
                     languageData: languagedata
                 })
@@ -160,7 +160,7 @@ export default class Language extends React.Component {
             const data = Object.assign({}, language)
             var cookies = Cookies.get('talentAuthToken');
             $.ajax({
-                url: 'http://localhost:60290/profile/profile/updateLanguage',
+                url: 'https://talentmvpservicesprofile.azurewebsites.net/profile/profile/updateLanguage',
                 headers: {
                     'Authorization': 'Bearer ' + cookies,
                     'Content-Type': 'application/json'
@@ -199,7 +199,7 @@ export default class Language extends React.Component {
         const data = Object.assign({}, language)
         var cookies = Cookies.get('talentAuthToken');
         $.ajax({
-            url: 'http://localhost:60290/profile/profile/deleteLanguage',
+            url: 'https://talentmvpservicesprofile.azurewebsites.net/profile/profile/deleteLanguage',
             headers: {
                 'Authorization': 'Bearer ' + cookies,
                 'Content-Type': 'application/json'

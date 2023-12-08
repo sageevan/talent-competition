@@ -74,14 +74,14 @@ namespace Talent.Services.Profile.Domain.Services
         {
             try
             {
-                var updateexperience= new UserExperience
+                var updateexperience = new UserExperience
                 {
                     Id = experience.Id,
                     Position = experience.Position,
-                    Company=experience.Company,
-                    Responsibilities= experience.Responsibilities,
+                    Company = experience.Company,
+                    Responsibilities = experience.Responsibilities,
                     Start = experience.Start,
-                    End=experience.End,
+                    End = experience.End,
                 };
 
                 var user = await _userRepository.GetByIdAsync(userId);
@@ -120,11 +120,11 @@ namespace Talent.Services.Profile.Domain.Services
         }
 
 
-        public async Task<bool> AddNewLanguage(AddLanguageViewModel language , String userId)
+        public async Task<bool> AddNewLanguage(AddLanguageViewModel language, String userId)
         {
             try
             {
-           
+
                 var newlanguage = new UserLanguage
                 {
                     Id = ObjectId.GenerateNewId().ToString(),
@@ -134,7 +134,7 @@ namespace Talent.Services.Profile.Domain.Services
                     IsDeleted = false
                 };
 
-                var user =await _userRepository.GetByIdAsync(userId);
+                var user = await _userRepository.GetByIdAsync(userId);
                 user.Languages.Add(newlanguage);
                 await _userRepository.Update(user);
                 return true;
@@ -344,7 +344,7 @@ namespace Talent.Services.Profile.Domain.Services
                     existingUser.Email = model.Email;
                     existingUser.Phone = model.Phone;
                     existingUser.JobSeekingStatus = status;
-                    existingUser.LinkedAccounts= model.LinkedAccounts;
+                    existingUser.LinkedAccounts = model.LinkedAccounts;
 
                     existingUser.Address = model.Address;
                     existingUser.Description = model.Description;
@@ -357,7 +357,7 @@ namespace Talent.Services.Profile.Domain.Services
                     existingUser.UpdatedBy = updaterId;
                     existingUser.UpdatedOn = DateTime.Now;
 
-                    
+
 
 
 
@@ -553,11 +553,7 @@ namespace Talent.Services.Profile.Domain.Services
             {
                 return false;
             }
-            //Console.WriteLine(file.FileName);
-            //Console.WriteLine(FileType.ProfilePhoto);
             var newFileName = await _fileService.SaveFile(file, FileType.ProfilePhoto);
-            //Console.WriteLine(newFileName);
-
             if (!string.IsNullOrWhiteSpace(newFileName))
             {
                 var oldFileName = profile.ProfilePhoto;
@@ -566,12 +562,8 @@ namespace Talent.Services.Profile.Domain.Services
                 {
                     await _fileService.DeleteFile(oldFileName, FileType.ProfilePhoto);
                 }
-
-                //profile.ProfilePhoto = null;
                 profile.ProfilePhotoUrl = await _fileService.GetFileURL(newFileName, FileType.ProfilePhoto);
-            profile.ProfilePhoto = newFileName;
-                // profile.ProfilePhotoUrl = null;
-                Console.WriteLine(profile.ProfilePhotoUrl);
+                profile.ProfilePhoto = newFileName;
                 await _userRepository.Update(profile);
                 return true;
             }
@@ -581,7 +573,7 @@ namespace Talent.Services.Profile.Domain.Services
 
         }
 
-            public async Task<bool> AddTalentVideo(string talentId, IFormFile file)
+        public async Task<bool> AddTalentVideo(string talentId, IFormFile file)
         {
             //Your code here;
             throw new NotImplementedException();
@@ -608,8 +600,37 @@ namespace Talent.Services.Profile.Domain.Services
 
         public async Task<IEnumerable<TalentSnapshotViewModel>> GetTalentSnapshotList(string employerOrJobId, bool forJob, int position, int increment)
         {
-            //Your code here;
-            throw new NotImplementedException();
+            try
+            {
+                var profile = await _employerRepository.GetByIdAsync(employerOrJobId);
+                //var talentList = _userRepository.Collection.Skip(position).Take(increment).AsEnumerable();
+                var talentList = _userRepository.GetQueryable().Skip(position).Take(increment);
+                if (profile != null)
+                {
+                    var result = new List<TalentSnapshotViewModel>();
+
+                    foreach (var item in talentList)
+                    {
+                        var newItem = new TalentSnapshotViewModel()
+                        {
+                            Id = item.Id,
+                            Name = item.FirstName + ' ' + item.LastName,
+                            Visa = item.VisaStatus,
+                            PhotoId = item.ProfilePhotoUrl,
+                            Skills = item.Skills.Select(x => x.Skill).ToList(),
+                            VideoUrl = item.VideoName
+
+                        };
+                        result.Add(newItem);
+                    }
+                    return result;
+                }
+                return null;
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
         }
 
         public async Task<IEnumerable<TalentSnapshotViewModel>> GetTalentSnapshotList(IEnumerable<string> ids)
@@ -747,7 +768,7 @@ namespace Talent.Services.Profile.Domain.Services
             //Your code here;
             throw new NotImplementedException();
         }
-         
+
         public async Task<int> GetTotalTalentsForClient(string clientId, string recruiterId)
         {
             //Your code here;

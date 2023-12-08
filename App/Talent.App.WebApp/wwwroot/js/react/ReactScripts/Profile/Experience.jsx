@@ -97,7 +97,7 @@ export default class Experience extends React.Component {
         const data = Object.assign({}, experience)
             var cookies = Cookies.get('talentAuthToken');
             $.ajax({
-                url: 'http://localhost:60290/profile/profile/addExperience',
+                url: 'https://talentmvpservicesprofile.azurewebsites.net/profile/profile/addExperience',
                 headers: {
                     'Authorization': 'Bearer ' + cookies,
                     'Content-Type': 'application/json'
@@ -135,7 +135,7 @@ export default class Experience extends React.Component {
     loadData() {
         var cookies = Cookies.get('talentAuthToken');
         $.ajax({
-            url: 'http://localhost:60290/profile/profile/getExperience',
+            url: 'https://talentmvpservicesprofile.azurewebsites.net/profile/profile/getExperience',
             headers: {
                 'Authorization': 'Bearer ' + cookies,
                 'Content-Type': 'application/json'
@@ -145,7 +145,7 @@ export default class Experience extends React.Component {
                 let experiencedata = null;
                 if (res) {
                     experiencedata = res.experience
-                    console.log("experienceData", res.experience)
+                    //console.log("experienceData", res.experience)
                 }
                 this.setState({
                     experienceData: experiencedata
@@ -185,10 +185,10 @@ export default class Experience extends React.Component {
         else {
             //  const language = { 'id': this.state.editLanguageId, 'name': currentLanguage.language, 'level': currentLanguage.languageLevel }
             const data = Object.assign({}, experience)
-            console.log(data)
+            //console.log(data)
             var cookies = Cookies.get('talentAuthToken');
             $.ajax({
-                url: 'http://localhost:60290/profile/profile/updateExperience',
+                url: 'https://talentmvpservicesprofile.azurewebsites.net/profile/profile/updateExperience',
                 headers: {
                     'Authorization': 'Bearer ' + cookies,
                     'Content-Type': 'application/json'
@@ -236,7 +236,7 @@ export default class Experience extends React.Component {
         const data = Object.assign({}, experience)
         var cookies = Cookies.get('talentAuthToken');
         $.ajax({
-            url: 'http://localhost:60290/profile/profile/deleteExperience',
+            url: 'https://talentmvpservicesprofile.azurewebsites.net/profile/profile/deleteExperience',
             headers: {
                 'Authorization': 'Bearer ' + cookies,
                 'Content-Type': 'application/json'
@@ -248,7 +248,7 @@ export default class Experience extends React.Component {
                 let experiencedata = null;
                 if (res) {
                     experiencedata = res.experience
-                    console.log('after deleted'+experiencedata)
+                    //console.log('after deleted'+experiencedata)
                     this.setState({
                         experienceData: experiencedata
                     })
@@ -270,7 +270,7 @@ export default class Experience extends React.Component {
 
     }
     deleteConfirm(data) {
-        console.log(data)
+        //console.log(data)
         this.setState({
             deleteConfirm: true,
             currentExperience: data,

@@ -237,7 +237,7 @@ namespace Talent.Services.Profile.Controllers
 
         [HttpPost("addSkill")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "talent")]
-        public async Task<ActionResult> AddSkill([FromBody]AddSkillViewModel skill)
+        public async Task<ActionResult> AddSkill([FromBody] AddSkillViewModel skill)
         {
             try
             {
@@ -259,7 +259,7 @@ namespace Talent.Services.Profile.Controllers
 
         [HttpPost("updateSkill")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "talent")]
-        public async Task<IActionResult> UpdateSkill([FromBody]AddSkillViewModel skill)
+        public async Task<IActionResult> UpdateSkill([FromBody] AddSkillViewModel skill)
         {
             try
             {
@@ -281,7 +281,7 @@ namespace Talent.Services.Profile.Controllers
 
         [HttpPost("deleteSkill")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "talent")]
-        public async Task<IActionResult> DeleteSkill([FromBody]AddSkillViewModel skill)
+        public async Task<IActionResult> DeleteSkill([FromBody] AddSkillViewModel skill)
         {
             try
             {
@@ -290,7 +290,7 @@ namespace Talent.Services.Profile.Controllers
                 {
                     var updatedProfile = await _userRepository.GetByIdAsync(_userAppContext.CurrentUserId);
                     var skills = updatedProfile.Skills;
-                    return Json(new {Skills = skills });
+                    return Json(new { Skills = skills });
                 }
 
             }
@@ -429,7 +429,7 @@ namespace Talent.Services.Profile.Controllers
 
                 if (profileUrl != null)
                 {
-                    return Json(new {success = true ,  profilePath = profileUrl });
+                    return Json(new { success = true, profilePath = profileUrl });
                 }
                 else
                 {
@@ -452,10 +452,10 @@ namespace Talent.Services.Profile.Controllers
             try
             {
                 IFormFile file = Request.Form.Files[0];
-                //var user = await _userRepository.GetByIdAsync(_userAppContext.CurrentUserId);
-                if (await _profileService.UpdateTalentPhoto(_userAppContext.CurrentUserId, file))
+                var user = await _userRepository.GetByIdAsync(_userAppContext.CurrentUserId);
+                if (await _profileService.UpdateTalentPhoto(user.Id, file))
                 {
-                    var updatedProfile = await _userRepository.GetByIdAsync(_userAppContext.CurrentUserId);
+                    var updatedProfile = await _userRepository.GetByIdAsync(user.Id);
                     var profileUrl = updatedProfile.ProfilePhotoUrl;
                     return Json(new { Success = true, profilePath = profileUrl });
                 }
@@ -539,7 +539,7 @@ namespace Talent.Services.Profile.Controllers
 
         [HttpPost("addEducation")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "talent")]
-        public IActionResult AddEducation([FromBody]AddEducationViewModel model)
+        public IActionResult AddEducation([FromBody] AddEducationViewModel model)
         {
             //Your code here;
             throw new NotImplementedException();
@@ -547,7 +547,7 @@ namespace Talent.Services.Profile.Controllers
 
         [HttpPost("updateEducation")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "talent")]
-        public async Task<IActionResult> UpdateEducation([FromBody]AddEducationViewModel model)
+        public async Task<IActionResult> UpdateEducation([FromBody] AddEducationViewModel model)
         {
             //Your code here;
             throw new NotImplementedException();
@@ -561,7 +561,7 @@ namespace Talent.Services.Profile.Controllers
             throw new NotImplementedException();
         }
 
-     
+
         #endregion
 
         #region EmployerOrRecruiter
@@ -606,7 +606,7 @@ namespace Talent.Services.Profile.Controllers
             if (ModelState.IsValid)
             {
                 //check if employer is client 5be40d789b9e1231cc0dc51b
-                var recruiterClients =(await _recruiterRepository.GetByIdAsync(_userAppContext.CurrentUserId)).Clients;
+                var recruiterClients = (await _recruiterRepository.GetByIdAsync(_userAppContext.CurrentUserId)).Clients;
 
                 if (recruiterClients.Select(x => x.EmployerId == employer.Id).FirstOrDefault())
                 {
@@ -651,7 +651,7 @@ namespace Talent.Services.Profile.Controllers
             //Your code here;
             throw new NotImplementedException();
         }
-        
+
         #endregion
 
         #region TalentFeed
@@ -662,19 +662,19 @@ namespace Talent.Services.Profile.Controllers
         {
             try
             {
-                string talentId = String.IsNullOrWhiteSpace(id) ? _userAppContext.CurrentUserId : id; 
+                string talentId = String.IsNullOrWhiteSpace(id) ? _userAppContext.CurrentUserId : id;
                 var userProfile = await _profileService.GetTalentProfile(talentId);
                 return Json(new { Success = true, data = userProfile });
             }
             catch (Exception ex)
             {
-                return Json(new { Success = false, message= ex});
+                return Json(new { Success = false, message = ex });
             }
         }
 
         [HttpPost("updateTalentProfile")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "talent")]
-        public async Task<IActionResult> UpdateTalentProfile([FromBody]TalentProfileViewModel profile)
+        public async Task<IActionResult> UpdateTalentProfile([FromBody] TalentProfileViewModel profile)
         {
             if (ModelState.IsValid)
             {
@@ -694,23 +694,23 @@ namespace Talent.Services.Profile.Controllers
             try
             {
                 var result = (await _profileService.GetTalentSnapshotList(_userAppContext.CurrentUserId, false, feed.Position, feed.Number)).ToList();
-
                 // Dummy talent to fill out the list once we run out of data
-                //if (result.Count == 0)
-                //{
-                //    result.Add(
-                //            new Models.TalentSnapshotViewModel
-                //            {
-                //                CurrentEmployment = "Software Developer at XYZ",
-                //                Level = "Junior",
-                //                Name = "Dummy User...",
-                //                PhotoId = "",
-                //                Skills = new List<string> { "C#", ".Net Core", "Javascript", "ReactJS", "PreactJS" },
-                //                Summary = "Veronika Ossi is a set designer living in New York who enjoys kittens, music, and partying.",
-                //                Visa = "Citizen"
-                //            }
-                //        );
-                //}
+                if (result.Count == 0)
+                {
+                    result.Add(
+                            new Models.TalentSnapshotViewModel
+                            {
+                                CurrentEmployment = "Software Developer at XYZ",
+                                Level = "Junior",
+                                Name = "Dummy User...",
+                                PhotoId = "",
+                                Skills = new List<string> { "C#", ".Net Core", "Javascript", "ReactJS", "PreactJS" },
+                                Summary = "Veronika Ossi is a set designer living in New York who enjoys kittens, music, and partying.",
+                                Visa = "Citizen"
+                            }
+                        );
+                }
+                Console.WriteLine(result);
                 return Json(new { Success = true, Data = result });
             }
             catch (Exception e)
@@ -754,7 +754,7 @@ namespace Talent.Services.Profile.Controllers
 
         [HttpPost("getEmployerListFilter")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "recruiter")]
-        public IActionResult GetEmployerListFilter([FromBody]SearchCompanyModel model)
+        public IActionResult GetEmployerListFilter([FromBody] SearchCompanyModel model)
         {
             try
             {
@@ -830,11 +830,11 @@ namespace Talent.Services.Profile.Controllers
         {
             try
             {
-                var result=await _profileService.GetClientListAsync(_userAppContext.CurrentUserId);
+                var result = await _profileService.GetClientListAsync(_userAppContext.CurrentUserId);
 
                 return Json(new { Success = true, result });
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 return Json(new { Success = false, e.Message });
             }
