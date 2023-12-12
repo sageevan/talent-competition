@@ -52,8 +52,8 @@ export class IndividualDetailSection extends Component {
     }
 
     saveContact() {
-        console.log(this.props.componentId)
-        console.log(this.state.newContact)
+        //console.log(this.props.componentId)
+        //console.log(this.state.newContact)
         const data = Object.assign({}, this.state.newContact)
         if (data.firstName == '' || data.lastName == '' || data.email == '' || data.phone == '' || data.firstName == null || data.lastName == null || data.email == null || data.phone == null) {
             TalentUtil.notification.show("Enter your details before save!", "error", null, null)
@@ -203,8 +203,26 @@ export class CompanyDetailSection extends Component {
 
     saveContact() {
         const data = Object.assign({}, this.state.newContact)
-        this.props.controlFunc(this.props.componentId, data)
-        this.closeEdit()
+        if (data.name == '' || data.email == '' || data.phone == '' || data.name == null || data.email == null || data.phone == null) {
+            TalentUtil.notification.show("Enter your details before save!", "error", null, null)
+
+        }
+        else if (!data.name.match(/^[A-Za-z\s]*$/)) {
+            TalentUtil.notification.show("Name cannot contains number or special charactors!", "error", null, null)
+        }
+        else if (!validator.isMobilePhone(data.phone)) {
+            TalentUtil.notification.show("Enter a valid phone number before save!", "error", null, null)
+        }
+        else if (!validator.isEmail(data.email)) {
+            TalentUtil.notification.show("Enter a valid email before save!", "error", null, null)
+        }
+        else {
+            this.props.controlFunc(this.props.componentId, data)
+            this.closeEdit()
+        }
+        //const data = Object.assign({}, this.state.newContact)
+        //this.props.controlFunc(this.props.componentId, data)
+        //this.closeEdit()
     }
 
     render() {
@@ -279,7 +297,7 @@ export class CompanyDetailSection extends Component {
                         <p>Phone: {phone}</p>
                         <p> Location: {location.city}, {location.country}</p>
                     </React.Fragment>
-                    <button type="button" className="ui right floated teal button">Edit</button>
+                    <button type="button" className="ui right floated teal button" onClick={this.openEdit}>Edit</button>
                 </div>
             </div>
         )

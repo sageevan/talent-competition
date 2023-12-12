@@ -82,7 +82,7 @@ export default class AccountProfile extends React.Component {
                 let profileData = null;
                 if (res.data) {
                     profileData = res.data
-                    console.log("profileData", res.data)
+                    //console.log("profileData", res.data)
                 }
                 this.updateWithoutSave(profileData)
             }.bind(this),
@@ -103,7 +103,7 @@ export default class AccountProfile extends React.Component {
     //updates component's state and saves data
     updateAndSaveData(newValues) {
         let newProfile = Object.assign({}, this.state.profileData, newValues)
-        console.log(newProfile)
+        //console.log(newProfile)
         this.setState({
             profileData: newProfile
         }, this.saveProfile)
@@ -114,7 +114,7 @@ export default class AccountProfile extends React.Component {
     }
 
     saveProfile() {
-        console.log(this.state.profileData)
+        //console.log(this.state.profileData)
         var cookies = Cookies.get('talentAuthToken');
         $.ajax({
             url: 'https://talentmvpservicesprofile.azurewebsites.net/profile/profile/updateTalentProfile',

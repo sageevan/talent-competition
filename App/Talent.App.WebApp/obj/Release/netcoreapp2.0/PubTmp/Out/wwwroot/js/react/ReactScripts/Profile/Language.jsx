@@ -131,7 +131,7 @@ export default class Language extends React.Component {
                 if (res) {
                     languagedata = res.languages
                 }
-                console.log(res.languages)
+                //console.log(res.languages)
                 this.setState({
                     languageData: languagedata
                 })

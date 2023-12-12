@@ -145,7 +145,7 @@ export default class Experience extends React.Component {
                 let experiencedata = null;
                 if (res) {
                     experiencedata = res.experience
-                    console.log("experienceData", res.experience)
+                    //console.log("experienceData", res.experience)
                 }
                 this.setState({
                     experienceData: experiencedata
@@ -185,7 +185,7 @@ export default class Experience extends React.Component {
         else {
             //  const language = { 'id': this.state.editLanguageId, 'name': currentLanguage.language, 'level': currentLanguage.languageLevel }
             const data = Object.assign({}, experience)
-            console.log(data)
+            //console.log(data)
             var cookies = Cookies.get('talentAuthToken');
             $.ajax({
                 url: 'https://talentmvpservicesprofile.azurewebsites.net/profile/profile/updateExperience',
@@ -248,7 +248,7 @@ export default class Experience extends React.Component {
                 let experiencedata = null;
                 if (res) {
                     experiencedata = res.experience
-                    console.log('after deleted'+experiencedata)
+                    //console.log('after deleted'+experiencedata)
                     this.setState({
                         experienceData: experiencedata
                     })
@@ -270,7 +270,7 @@ export default class Experience extends React.Component {
 
     }
     deleteConfirm(data) {
-        console.log(data)
+        //console.log(data)
         this.setState({
             deleteConfirm: true,
             currentExperience: data,
